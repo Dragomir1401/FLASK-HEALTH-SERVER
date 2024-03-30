@@ -33,13 +33,33 @@ class DataIngestor:
         ]
 
     def json_writer(self, data, job_id):
+        # Use zip to create a dictionary with the structure {state: mean}
+        data_dict = dict(zip(data['LocationDesc'], data['Data_Value']))
+
         # Save the results in results/ directory with the name of the job_id as json file  
-        # Format as "State": Value
-        # Eliminate LocationDesc and Data_Value column names    
-        data_mean = data_mean.to_dict(orient='records')
-        data_mean = {item['LocationDesc']: item['Data_Value'] for item in data_mean}
-        with open(f"results/{job_id}.json", 'w') as f:
-            json.dump(data_mean, f)
+        with open(f'results/{job_id}.json', 'w') as f:
+            # Write field:value pairs in json format
+            json.dump(data_dict, f)       
+
+    def get_global_mean(self, data):
+        # Computes the global mean of the data values for the question in the the interval 2011-2022
+        # Extract question from data
+        question = data['question']
+        best_is_min = False
+        if question in self.questions_best_is_min:
+            best_is_min = True
+
+        # Filter data for the question
+        data_filtered = self.data[self.data['Question'] == question]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the global mean of the data values
+        data_mean = data_filtered['Data_Value'].mean()
+        data_mean = pd.DataFrame({'Data_Value': [data_mean]})
+
+        # Return data_mean as value
+        return data_mean      
 
     def states_mean(self, data, job_id):
         # Computes the mean of the data values for each state in the the interval 2011-2022 and orders ascendingly by mean
@@ -52,12 +72,14 @@ class DataIngestor:
         # Filter data for the question
         data_filtered = self.data[self.data['Question'] == question]
         data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
 
         # Compute the mean of the data values for each state
         data_mean = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()   
         data_mean = data_mean.sort_values('Data_Value', ascending=best_is_min)
 
-       
+        # Write the results in results/ directory with the name of the job_id as json file
+        self.json_writer(data_mean, job_id)
 
     def state_mean(self, data, job_id):
         # Computes the mean of the data values for the state in the the interval 2011-2022
@@ -68,14 +90,162 @@ class DataIngestor:
         # Filter data for the question and state
         data_filtered = self.data[(self.data['Question'] == question) & (self.data['LocationDesc'] == state)]
         data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
-
-        # Compute the mean of the data values for the state
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+        
+        # Create the mean result from filter
         data_mean = data_filtered['Data_Value'].mean()
+        data_mean = pd.DataFrame({'LocationDesc': [state], 'Data_Value': [data_mean]})
 
-        # Save the results in results/ directory with the name of the job_id as json file  
-        # Format as "State": Value
-        # Eliminate LocationDesc and Data_Value column names    
-        data_mean = data_mean.to_dict(orient='records')
-        data_mean = {item['LocationDesc']: item['Data_Value'] for item in data_mean}
-        with open(f"results/{job_id}.json", 'w') as f:
-            json.dump(data_mean, f)
+        # Write the results in results/ directory with the name of the job_id as json file  
+        self.json_writer(data_mean, job_id)
+
+    def best5(self, data, job_id):
+        # Computes the best 5 states for the question in the the interval 2011-2022
+        # Extract question from data
+        question = data['question']
+        best_is_min = False
+        if question in self.questions_best_is_min:
+            best_is_min = True
+
+        # Filter data for the question
+        data_filtered = self.data[self.data['Question'] == question]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the mean of the data values for each state
+        data_mean = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()   
+        data_mean = data_mean.sort_values('Data_Value', ascending=best_is_min)
+
+        # Get the best 5 states
+        data_best5 = data_mean.head(5)
+
+        # Write the results in results/ directory with the name of the job_id as json file
+        self.json_writer(data_best5, job_id)
+
+    def worst5(self, data, job_id):
+        # Computes the worst 5 states for the question in the the interval 2011-2022
+        # Extract question from data
+        question = data['question']
+        best_is_min = False
+        if question in self.questions_best_is_min:
+            best_is_min = True
+
+        # Filter data for the question
+        data_filtered = self.data[self.data['Question'] == question]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the mean of the data values for each state
+        data_mean = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()   
+        data_mean = data_mean.sort_values('Data_Value', ascending=not best_is_min)
+
+        # Get the worst 5 states
+        data_worst5 = data_mean.head(5)
+
+        # Write the results in results/ directory with the name of the job_id as json file
+        self.json_writer(data_worst5, job_id)
+
+    def global_mean(self, data, job_id):
+        # Computes the global mean of the data values for the question in the the interval 2011-2022
+        data_mean = self.get_global_mean(data)
+        data_mean = pd.DataFrame({'Data_Value': [data_mean]})
+
+        # Create a dict with a value "global_mean" and the mean
+        data_dict = {'global_mean': data_mean['Data_Value'].values[0]} 
+        with open(f'results/{job_id}.json', 'w') as f:
+            # Write field:value pairs in json format
+            json.dump(data_dict, f)
+
+    def diff_from_mean(self, data, job_id):
+        # Computes the difference of the data values for the state from the global mean in the the interval 2011-2022
+        # Extract question from data
+        question = data['question']
+
+        # Filter data for the question
+        data_filtered = self.data[self.data['Question'] == question]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the global mean of the data values
+        global_mean = self.get_global_mean(data)
+
+        # Create dict with differences between the global mean and the state mean
+        data_diff = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()
+        data_diff['Data_Value'] = global_mean - data_diff['Data_Value']
+
+        # Write the results in results/ directory with the name of the job_id as json file
+        self.json_writer(data_diff, job_id)
+
+    def state_diff_from_mean(self, data, job_id):
+        # Computes the difference of the data values for the state from the global mean in the the interval 2011-2022
+        # Extract question and state from data
+        question = data['question']
+        state = data['state']
+
+        # Filter data for the question and state
+        data_filtered = self.data[(self.data['Question'] == question) & (self.data['LocationDesc'] == state)]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the global mean of the data values
+        global_mean = self.get_global_mean(data)
+
+        # Create dict with differences between the global mean and the state mean
+        data_diff = data_filtered['Data_Value'].mean()
+        data_diff = global_mean - data_diff
+
+        # Create a dict with a value state and the difference
+        data_dict = {state: data_diff['Data_Value'].values[0]}
+        with open(f'results/{job_id}.json', 'w') as f:
+            # Write field:value pairs in json format
+            json.dump(data_dict, f)
+
+    def mean_by_category(self, data, job_id):
+        # Computes the mean of the data values for each category for each state in the the interval 2011-2022
+        # Extract question from data
+        question = data['question']
+
+        # Filter data for the question
+        data_filtered = self.data[self.data['Question'] == question]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the mean of the data values for each state and category
+        data_mean = data_filtered.groupby(['LocationDesc', 'StratificationCategory1', 'Stratification1'])['Data_Value'].mean().reset_index()
+
+        # Prepare the result dictionary
+        result = {}
+
+        for _, row in data_mean.iterrows():
+            key = f"('{row['LocationDesc']}', '{row['StratificationCategory1']}', '{row['Stratification1']}')"
+            result[key] = row['Data_Value']
+
+        # Save the dictionary as a JSON file in the specified path
+        with open(f'results/{job_id}.json', 'w') as f:
+            json.dump(result, f)
+
+    def state_mean_by_category(self, data, job_id):
+        # Computes the mean of the data values for each category for the state in the the interval 2011-2022
+        # Extract question and state from data
+        question = data['question']
+        state = data['state']
+
+        # Filter data for the question and state
+        data_filtered = self.data[(self.data['Question'] == question) & (self.data['LocationDesc'] == state)]
+        data_filtered = data_filtered[(data_filtered['YearStart'] >= 2011) & (data_filtered['YearEnd'] <= 2022)]
+
+        # Drop rows where 'Data_Value' is NaN because we cannot compute mean of NaN values
+        data_filtered = data_filtered.dropna(subset=['Data_Value'])
+
+        # Compute the mean of the data values for each category
+        data_mean = data_filtered.groupby(['StratificationCategory1', 'Stratification1'])['Data_Value'].mean().reset_index()
+
+        # Prepare the result dictionary
+        result = {state: {}}
+        for _, row in data_mean.iterrows():
+            category_description = f"('{row['StratificationCategory1']}', '{row['Stratification1']}')"
+            result[state][category_description] = row['Data_Value']
+
+        # Save the dictionary as a JSON file in the specified path
+        with open(f'results/{job_id}.json', 'w') as f:
+            json.dump(result, f)

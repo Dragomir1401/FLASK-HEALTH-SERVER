@@ -46,101 +46,161 @@ def get_response(job_id):
 def states_mean_request():
     # Get request data
     data = request.json
-    print(f"Got request {data}")
+    print(f"Got request {data} in states_mean_request")
 
-    # TODO
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    # Get current job_id
     job_id = webserver.job_counter
-    webserver.job_counter += 1
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.states_mean, data, job_id)
 
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.states_mean, data, job_id)
+    
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
     return jsonify({"job_id": job_id})
 
 @webserver.route('/api/state_mean', methods=['POST'])
 def state_mean_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for state_mean")
+
+    # Get current job_id
     job_id = webserver.job_counter
-    webserver.job_counter += 1
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.states_mean, request.json, job_id)
 
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_mean, data, job_id)
+
+    # Return associated job_id
     return jsonify({"job_id": job_id})
-
 
 @webserver.route('/api/best5', methods=['POST'])
 def best5_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for best5")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.best5, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 @webserver.route('/api/worst5', methods=['POST'])
 def worst5_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for worst5")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.worst5, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 @webserver.route('/api/global_mean', methods=['POST'])
 def global_mean_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for global_mean")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.global_mean, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 @webserver.route('/api/diff_from_mean', methods=['POST'])
 def diff_from_mean_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for diff_from_mean")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.diff_from_mean, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 @webserver.route('/api/state_diff_from_mean', methods=['POST'])
 def state_diff_from_mean_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for state_diff_from_mean")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+    
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_diff_from_mean, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 @webserver.route('/api/mean_by_category', methods=['POST'])
 def mean_by_category_request():
-    # TODO
     # Get request data
+    data = request.json
+    print(f"Got request {data} for state_diff_from_mean")
+
+    # Get current job_id
+    job_id = webserver.job_counter
+
     # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.mean_by_category, data, job_id)
+
     # Increment job_id counter
+    webserver.job_counter += 1
+
     # Return associated job_id
+    return jsonify({"job_id": job_id})
 
-    return jsonify({"status": "NotImplemented"})
-
+    
 @webserver.route('/api/state_mean_by_category', methods=['POST'])
 def state_mean_by_category_request():
-    # TODO
     # Get request data
-    # Register job. Don't wait for task to finish
-    # Increment job_id counter
-    # Return associated job_id
+    data = request.json
+    print(f"Got request {data} for state_diff_from_mean")
 
-    return jsonify({"status": "NotImplemented"})
+    # Get current job_id
+    job_id = webserver.job_counter
+
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_mean_by_category, data, job_id)
+
+    # Increment job_id counter
+    webserver.job_counter += 1
+
+    # Return associated job_id
+    return jsonify({"job_id": job_id})
 
 # You can check localhost in your browser to see what this displays
 @webserver.route('/')
