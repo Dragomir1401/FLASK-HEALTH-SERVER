@@ -42,9 +42,9 @@ class TestAPI(unittest.TestCase):
                 else:
                     sleep(poll_interval)
 
-    @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
-    def test_states_mean(self):
-        self.helper_test_endpoint("states_mean")
+    # @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
+    # def test_states_mean(self):
+    #     self.helper_test_endpoint("states_mean")
 
     # @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
     # def test_state_mean(self):
@@ -62,9 +62,9 @@ class TestAPI(unittest.TestCase):
     # def test_global_mean(self):
     #     self.helper_test_endpoint("global_mean")
 
-    # @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
-    # def test_diff_from_mean(self):
-    #     self.helper_test_endpoint("diff_from_mean")
+    @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
+    def test_diff_from_mean(self):
+        self.helper_test_endpoint("diff_from_mean")
 
     # @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
     # def test_state_diff_from_mean(self):

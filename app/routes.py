@@ -38,7 +38,7 @@ def get_response(job_id):
         })
 
     # Check if job_id is running
-    if webserver.tasks_runner.job_is_running(int(job_id)):
+    if webserver.data_parser.job_maintainer.is_job_running(int(job_id)):
         return jsonify({'status': 'running'})
     
     # Check if job_id is done and return the result
@@ -51,8 +51,6 @@ def get_response(job_id):
     # Read result from results/job_id.json
     with open(f"results/{job_id}.json", "r") as fin:
         res = json.load(fin)
-
-    print (f"Got response {res} for job_id {job_id}")
     
     return jsonify({
         'status': 'done',
@@ -69,7 +67,7 @@ def states_mean_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.states_mean, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.states_mean, data, job_id)
     
     # Increment job_id counter
     webserver.job_counter += 1
@@ -86,8 +84,11 @@ def state_mean_request():
     # Get current job_id
     job_id = webserver.job_counter
 
+    # Increment job_id counter
+    webserver.job_counter += 1
+
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_mean, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.state_mean, data, job_id)
 
     # Return associated job_id
     return jsonify({"job_id": job_id})
@@ -102,7 +103,7 @@ def best5_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.best5, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.best5, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -120,7 +121,7 @@ def worst5_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.worst5, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.worst5, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -138,7 +139,7 @@ def global_mean_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.global_mean, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.global_mean, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -156,7 +157,7 @@ def diff_from_mean_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.diff_from_mean, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.diff_from_mean, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -174,7 +175,7 @@ def state_diff_from_mean_request():
     job_id = webserver.job_counter
     
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_diff_from_mean, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.state_diff_from_mean, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -192,7 +193,7 @@ def mean_by_category_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.mean_by_category, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.mean_by_category, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -211,7 +212,7 @@ def state_mean_by_category_request():
     job_id = webserver.job_counter
 
     # Register job. Don't wait for task to finish
-    webserver.tasks_runner.__submit__(webserver.data_ingestor.state_mean_by_category, data, job_id)
+    webserver.tasks_runner.__submit__(webserver.data_parser.state_mean_by_category, data, job_id)
 
     # Increment job_id counter
     webserver.job_counter += 1
@@ -242,9 +243,9 @@ def jobs():
     #  }
     jobs = []
     for job_id in range(1, webserver.job_counter):
-        if webserver.tasks_runner.job_is_running(job_id):
+        if webserver.data_parser.job_maintainer.is_job_running(job_id):
             jobs.append({job_id: "running"})
-        else:
+        elif webserver.data_parser.job_maintainer.is_job_done(job_id):
             jobs.append({job_id: "done"})
 
     return jsonify({"status": "done", "data": jobs})
