@@ -36,7 +36,7 @@ class ThreadPool:
 
     def __shutdown__(self):
         # Shutdown the ThreadPool
-        self.executor.shutdown()
+        self.executor.shutdown(wait=True)
 
     def job_is_running(self, job_id):
         # Check the status of a job

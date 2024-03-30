@@ -25,22 +25,32 @@ def post_endpoint():
 @webserver.route('/api/get_results/<job_id>', methods=['GET'])
 def get_response(job_id):
     print(f"JobID is {job_id}")
-    # TODO
     # Check if job_id is valid
     # If not, return error
-    if job_id is None or not job_id.isdigit() or int(job_id) < 0:
-        return jsonify({"error": "Invalid job id"}), 400
+    # {
+    # "status": "error",
+    # "reason": "Invalid job_id"
+    # }   
+    if job_id is None or not job_id.isdigit() or int(job_id) < 0 or int(job_id) >= webserver.job_counter:
+        return jsonify ({
+            "status": "error",
+            "reason": "Invalid job_id"
+        })
 
+    # Check if job_id is running
+    if webserver.tasks_runner.job_is_running(int(job_id)):
+        return jsonify({'status': 'running'})
+    
     # Check if job_id is done and return the result
     #    res = res_for(job_id)
     #    return jsonify({
     #        'status': 'done',
-    #        'data': res
+    #        'data': <JSON_PROCESSING_RESULT>
     #    })
-    if webserver.tasks_runner.job_is_running(int(job_id)):
-        return jsonify({'status': 'running'})
-    
-    return jsonify({'status': 'done'})
+    return jsonify({
+        'status': 'done',
+        'data': webserver.tasks_runner.get_result(int(job_id))
+    })
 
 @webserver.route('/api/states_mean', methods=['POST'])
 def states_mean_request():
@@ -201,6 +211,42 @@ def state_mean_by_category_request():
 
     # Return associated job_id
     return jsonify({"job_id": job_id})
+
+
+@webserver.route('/api/graceful_shutdown', methods=['GET'])
+def graceful_shutdown():
+    # Register job. Don't wait for task to finish
+    webserver.tasks_runner.__shutdown__()
+
+    # Return 200 OK
+    return jsonify({"message": "Shutting down gracefully"}), 200
+
+
+@webserver.route('/api/jobs', methods=['GET'])
+def jobs():
+    # Respond with a json with all the job ids and their status
+    #  {
+    #      "status": "done"
+    #      "data": [
+    #       { "job_id_1": "done"},
+    #       { "job_id_2": "running"},
+    #       { "job_id_3": "running"}
+    #   ]
+    #  }
+    jobs = []
+    for job_id in range(1, webserver.job_counter):
+        if webserver.tasks_runner.job_is_running(job_id):
+            jobs.append({job_id: "running"})
+        else:
+            jobs.append({job_id: "done"})
+
+    return jsonify({"status": "done", "data": jobs})
+
+@webserver.route('/api/num_jobs', methods=['GET'])
+def num_jobs():
+    # Respond with the number of jobs that have been submitted
+    return jsonify({"num_jobs": webserver.job_counter - 1})
+
 
 # You can check localhost in your browser to see what this displays
 @webserver.route('/')
