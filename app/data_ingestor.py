@@ -222,6 +222,7 @@ class DataParser:
 
         # Compute the global mean of the data values
         global_mean = self.get_global_mean(data)
+        global_mean = global_mean['Data_Value'].values[0]
 
         # Create dict with differences between the global mean and the state mean
         data_diff = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()
@@ -248,13 +249,14 @@ class DataParser:
 
         # Compute the global mean of the data values
         global_mean = self.get_global_mean(data)
+        global_mean = global_mean['Data_Value'].values[0]
 
         # Create dict with differences between the global mean and the state mean
         data_diff = data_filtered['Data_Value'].mean()
         data_diff = global_mean - data_diff
 
         # Create a dict with a value state and the difference
-        data_dict = {state: data_diff['Data_Value'].values[0]}
+        data_dict = {state: data_diff}
         with open(f'results/{job_id}.json', 'w') as f:
             # Write field:value pairs in json format
             json.dump(data_dict, f)
