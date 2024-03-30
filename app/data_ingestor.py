@@ -4,7 +4,7 @@ import csv
 import pandas as pd
 
 class DataIngestor:
-    def __init__(self, csv_path: str):
+    def __init__(self, csv_path: str, running_jobs: set, done_jobs: set):
         # TODO: Read csv from csv_path
         # The csv has the following columns:
         # YearStart,YearEnd, LocationAbbr, LocationDesc, Datasource, Class, Topic, Question, Data_Value_Unit,Data_Value_Type,Data_Value,
@@ -31,6 +31,9 @@ class DataIngestor:
             'Percent of adults who achieve at least 300 minutes a week of moderate-intensity aerobic physical activity or 150 minutes a week of vigorous-intensity aerobic activity (or an equivalent combination)',
             'Percent of adults who engage in muscle-strengthening activities on 2 or more days a week',
         ]
+
+        self.running_jobs = running_jobs
+        self.done_jobs = done_jobs
 
     def json_writer(self, data, job_id):
         # Use zip to create a dictionary with the structure {state: mean}
@@ -81,6 +84,9 @@ class DataIngestor:
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_mean, job_id)
 
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
+
     def state_mean(self, data, job_id):
         # Computes the mean of the data values for the state in the the interval 2011-2022
         # Extract question and state from data
@@ -98,6 +104,9 @@ class DataIngestor:
 
         # Write the results in results/ directory with the name of the job_id as json file  
         self.json_writer(data_mean, job_id)
+
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
 
     def best5(self, data, job_id):
         # Computes the best 5 states for the question in the the interval 2011-2022
@@ -122,6 +131,9 @@ class DataIngestor:
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_best5, job_id)
 
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
+
     def worst5(self, data, job_id):
         # Computes the worst 5 states for the question in the the interval 2011-2022
         # Extract question from data
@@ -145,6 +157,9 @@ class DataIngestor:
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_worst5, job_id)
 
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
+
     def global_mean(self, data, job_id):
         # Computes the global mean of the data values for the question in the the interval 2011-2022
         data_mean = self.get_global_mean(data)
@@ -155,6 +170,9 @@ class DataIngestor:
         with open(f'results/{job_id}.json', 'w') as f:
             # Write field:value pairs in json format
             json.dump(data_dict, f)
+
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
 
     def diff_from_mean(self, data, job_id):
         # Computes the difference of the data values for the state from the global mean in the the interval 2011-2022
@@ -175,6 +193,9 @@ class DataIngestor:
 
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_diff, job_id)
+
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
 
     def state_diff_from_mean(self, data, job_id):
         # Computes the difference of the data values for the state from the global mean in the the interval 2011-2022
@@ -200,6 +221,9 @@ class DataIngestor:
             # Write field:value pairs in json format
             json.dump(data_dict, f)
 
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
+
     def mean_by_category(self, data, job_id):
         # Computes the mean of the data values for each category for each state in the the interval 2011-2022
         # Extract question from data
@@ -223,6 +247,9 @@ class DataIngestor:
         # Save the dictionary as a JSON file in the specified path
         with open(f'results/{job_id}.json', 'w') as f:
             json.dump(result, f)
+
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
 
     def state_mean_by_category(self, data, job_id):
         # Computes the mean of the data values for each category for the state in the the interval 2011-2022
@@ -249,3 +276,6 @@ class DataIngestor:
         # Save the dictionary as a JSON file in the specified path
         with open(f'results/{job_id}.json', 'w') as f:
             json.dump(result, f)
+
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)

@@ -47,9 +47,16 @@ def get_response(job_id):
     #        'status': 'done',
     #        'data': <JSON_PROCESSING_RESULT>
     #    })
+    
+    # Read result from results/job_id.json
+    with open(f"results/{job_id}.json", "r") as fin:
+        res = json.load(fin)
+
+    print (f"Got response {res} for job_id {job_id}")
+    
     return jsonify({
         'status': 'done',
-        'data': webserver.tasks_runner.get_result(int(job_id))
+        'data': res
     })
 
 @webserver.route('/api/states_mean', methods=['POST'])

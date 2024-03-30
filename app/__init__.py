@@ -5,7 +5,7 @@ from app.task_runner import ThreadPool
 webserver = Flask(__name__)
 webserver.tasks_runner = ThreadPool()
 
-webserver.data_ingestor = DataIngestor("./nutrition_activity_obesity_usa_subset.csv")
+webserver.data_ingestor = DataIngestor("./nutrition_activity_obesity_usa_subset.csv", webserver.tasks_runner.running_jobs, webserver.tasks_runner.done_jobs)
 
 webserver.job_counter = 1
 

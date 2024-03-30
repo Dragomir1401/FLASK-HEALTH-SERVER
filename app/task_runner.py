@@ -27,8 +27,12 @@ class ThreadPool:
         # Initialize the ThreadPoolExecutor with the number of threads
         self.executor = ThreadPoolExecutor(max_workers=self.num_threads)
 
-        # Initialize the queue
-        self.queue = Queue()
+        # Initialize the running set
+        self.running_jobs = set()
+
+        # Initialize the done set
+        self.done_jobs = set()
+
 
     def __submit__(self, execute_job, params, job_id):
         # Submit the job to the ThreadPoolExecutor
@@ -42,6 +46,9 @@ class ThreadPool:
         # Check the status of a job
         # Return True if the job is still running
         # Return False if the job is done
-        if self.executor._futures[job_id].running():
+        if job_id in self.running_jobs:
             return True
-        return False     
+        elif job_id in self.done_jobs:
+            return False
+        else:
+            return False  
