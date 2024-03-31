@@ -24,7 +24,6 @@ def post_endpoint():
 
 @webserver.route('/api/get_results/<job_id>', methods=['GET'])
 def get_response(job_id):
-    print(f"JobID is {job_id}")
     # Check if job_id is valid
     # If not, return error
     # {
