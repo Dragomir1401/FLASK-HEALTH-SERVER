@@ -8,5 +8,6 @@ webserver.tasks_runner = ThreadPool()
 webserver.data_ingestor = DataIngestor("./nutrition_activity_obesity_usa_subset.csv")
 webserver.data_parser = DataParser(webserver.data_ingestor)
 webserver.job_counter = 1
+webserver.is_shutdown = False
 
 from app import routes

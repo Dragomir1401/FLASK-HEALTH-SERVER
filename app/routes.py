@@ -7,6 +7,7 @@ import json
 # Example endpoint definition
 @webserver.route('/api/post_endpoint', methods=['POST'])
 def post_endpoint():
+    if_shutdown()
     if request.method == 'POST':
         # Assuming the request contains JSON data
         data = request.json
@@ -24,6 +25,7 @@ def post_endpoint():
 
 @webserver.route('/api/get_results/<job_id>', methods=['GET'])
 def get_response(job_id):
+    if_shutdown()
     logger.info(f"Entering get_response with job_id: {job_id}")
 
     # Check if job_id is valid
@@ -62,6 +64,7 @@ def get_response(job_id):
 
 @webserver.route('/api/states_mean', methods=['POST'])
 def states_mean_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info("Entering states_mean_request with data: {data}")
@@ -81,6 +84,7 @@ def states_mean_request():
 
 @webserver.route('/api/state_mean', methods=['POST'])
 def state_mean_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info("Entering state_mean_request with data: {data}")
@@ -100,6 +104,7 @@ def state_mean_request():
 
 @webserver.route('/api/best5', methods=['POST'])
 def best5_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for best5")
@@ -119,6 +124,7 @@ def best5_request():
 
 @webserver.route('/api/worst5', methods=['POST'])
 def worst5_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for worst5")
@@ -138,6 +144,7 @@ def worst5_request():
 
 @webserver.route('/api/global_mean', methods=['POST'])
 def global_mean_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for global_mean")
@@ -157,6 +164,7 @@ def global_mean_request():
 
 @webserver.route('/api/diff_from_mean', methods=['POST'])
 def diff_from_mean_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for diff_from_mean")
@@ -176,6 +184,7 @@ def diff_from_mean_request():
 
 @webserver.route('/api/state_diff_from_mean', methods=['POST'])
 def state_diff_from_mean_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for state_diff_from_mean")
@@ -195,6 +204,7 @@ def state_diff_from_mean_request():
 
 @webserver.route('/api/mean_by_category', methods=['POST'])
 def mean_by_category_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for mean_by_category")
@@ -215,6 +225,7 @@ def mean_by_category_request():
     
 @webserver.route('/api/state_mean_by_category', methods=['POST'])
 def state_mean_by_category_request():
+    if_shutdown()
     # Get request data
     data = request.json
     logger.info(f"Got request {data} for state_mean_by_category")
@@ -235,10 +246,14 @@ def state_mean_by_category_request():
 
 @webserver.route('/api/graceful_shutdown', methods=['GET'])
 def graceful_shutdown():
+    if_shutdown()
     logger.info("Shutting down gracefully")
 
     # Register job. Don't wait for task to finish
     webserver.tasks_runner.__shutdown__()
+
+    # Set shutdown flag
+    webserver.is_shutdown = True
 
     logger.info("Exiting graceful_shutdown")
     # Return 200 OK
@@ -247,6 +262,7 @@ def graceful_shutdown():
 
 @webserver.route('/api/jobs', methods=['GET'])
 def jobs():
+    if_shutdown()
     logger.info("Entering get jobs status")
     # Respond with a json with all the job ids and their status
     #  {
@@ -269,6 +285,7 @@ def jobs():
 
 @webserver.route('/api/num_jobs', methods=['GET'])
 def num_jobs():
+    if_shutdown()
     logger.info("Entering get number of jobs")
     logger.info("Exiting get number of jobs")
     # Respond with the number of jobs that have been submitted
@@ -296,3 +313,11 @@ def get_defined_routes():
         methods = ', '.join(rule.methods)
         routes.append(f"Endpoint: \"{rule}\" Methods: \"{methods}\"")
     return routes
+
+def if_shutdown():
+    if webserver.is_shutdown:
+        # Log the shutdown message
+        logger.info("Server is unable to accept new requests. It is closed.")
+
+        # Respond with a 503 Service Unavailable
+        return jsonify({"error": "Service Unavailable"}), 503
