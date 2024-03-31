@@ -2,7 +2,8 @@ from app.job_maintainer import JobMaintainer
 from app.data_ingestor import DataIngestor
 import json
 import pandas as pd
-   
+from app.logger import logger
+
 class DataParser:
     def __init__(self, data: DataIngestor):
         self.job_maintainer = JobMaintainer()
@@ -72,6 +73,8 @@ class DataParser:
         data_mean = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()   
         data_mean = data_mean.sort_values('Data_Value', ascending=best_is_min)
 
+        logger.info(f"Got question: {question} and outputted {len(data_mean)} results.")
+
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_mean, job_id)
 
@@ -95,7 +98,7 @@ class DataParser:
         data_mean = data_filtered['Data_Value'].mean()
         data_mean = pd.DataFrame({'LocationDesc': [state], 'Data_Value': [data_mean]})
 
-        print(data_mean)
+        logger.info(f"Got question: {question} and outputted 1 result.")
 
         # Write the results in results/ directory with the name of the job_id as json file  
         self.json_writer(data_mean, job_id)
@@ -125,6 +128,8 @@ class DataParser:
         # Get the best 5 states
         data_best5 = data_mean.head(5)
 
+        logger.info(f"Got question: {question} and outputted 5 results.")
+
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_best5, job_id)
 
@@ -153,6 +158,8 @@ class DataParser:
         # Get the worst 5 states
         data_worst5 = data_mean.head(5)
 
+        logger.info(f"Got question: {question} and outputted 5 results.")
+
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_worst5, job_id)
 
@@ -164,6 +171,8 @@ class DataParser:
         
         # Computes the global mean of the data values for the question in the the interval 2011-2022
         data_mean = self.get_global_mean(data)
+
+        logger.info(f"Got question: {data['question']} and outputted 1 result.")
 
         # Create output as {"global_mean" : value}
         data_dict = {"global_mean": data_mean['Data_Value'].values[0]}
@@ -194,6 +203,8 @@ class DataParser:
         data_diff = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()
         data_diff['Data_Value'] = global_mean - data_diff['Data_Value']
 
+        logger.info(f"Got question: {question} and outputted {len(data_diff)} results.")
+
         # Write the results in results/ directory with the name of the job_id as json file
         self.json_writer(data_diff, job_id)
 
@@ -221,6 +232,8 @@ class DataParser:
         data_diff = data_filtered['Data_Value'].mean()
         data_diff = global_mean - data_diff
 
+        logger.info(f"Got question: {question} and outputted 1 result.")
+
         # Create a dict with a value state and the difference
         data_dict = {state: data_diff}
         with open(f'results/{job_id}.json', 'w') as f:
@@ -244,6 +257,8 @@ class DataParser:
 
         # Compute the mean of the data values for each state and category
         data_mean = data_filtered.groupby(['LocationDesc', 'StratificationCategory1', 'Stratification1'])['Data_Value'].mean().reset_index()
+
+        logger.info(f"Got question: {question} and outputted {len(data_mean)} results.")
 
         # Prepare the result dictionary
         result = {}
@@ -276,6 +291,8 @@ class DataParser:
 
         # Compute the mean of the data values for each category
         data_mean = data_filtered.groupby(['StratificationCategory1', 'Stratification1'])['Data_Value'].mean().reset_index()
+
+        logger.info(f"Got question: {question} and outputted {len(data_mean)} results.")
 
         # Prepare the result dictionary
         result = {state: {}}
