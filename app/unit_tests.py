@@ -92,13 +92,21 @@ class TestServerEndpoints(unittest.TestCase):
         logger.info(data['num_jobs'])
         
 
-    # def test_graceful_shutdown(self):
-    #     # Tests the graceful shutdown endpoint
-    #     response = requests.get('http://127.0.0.1:5000/api/graceful_shutdown')
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.json()
-    #     self.assertIn('message', data)
-    #     self.assertEqual(data['message'], 'Shutting down gracefully')
+    def test_graceful_shutdown(self):
+        # Test that the server sends 503 Unavailable after shutdown
+        # Send a shutdown request
+        response = requests.post('http://127.0.0.1:5000/api/graceful_shutdown')
+        self.assertEqual(response.status_code, 200)
+
+        logger.info("Shutting down server")
+
+        # Send a state_mean request
+        response = requests.post('http://127.0.0.1:5000/api/state_mean', json={"state": "CA"})
+        self.assertEqual(response.status_code, 503)
+
+        # Log the unit test results
+        logger.info("Unit test graceful_shutdown passed")
+
         
     @classmethod
     def tearDownClass(cls):
