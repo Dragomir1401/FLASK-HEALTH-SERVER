@@ -1,54 +1,36 @@
 import os
 from queue import Queue
 from threading import Thread, Event
-import time
 from concurrent.futures import ThreadPoolExecutor
-
-class Job:
-    def __init__(self, job_id):
-        self.job_id = job_id
+from app import logger
 
 class ThreadPool:
     def __init__(self):
-        # You must implement a ThreadPool of TaskRunners
-        # Your ThreadPool should check if an environment variable TP_NUM_OF_THREADS is defined
-        # If the env var is defined, that is the number of threads to be used by the thread pool
-        # Otherwise, you are to use what the hardware concurrency allows
-        # You are free to write your implementation as you see fit, but
-        # You must NOT:
-        #   * create more threads than the hardware concurrency allows
-        #   * recreate threads for each task
-        #   * implement the ThreadPool as a singleton by hand
         if 'TP_NUM_OF_THREADS' in os.environ:
             self.num_threads = int(os.environ['TP_NUM_OF_THREADS'])
         else:
-            self.num_threads = os.cpu_count()
-
-        # Initialize the ThreadPoolExecutor with the number of threads
+            self.num_threads = os.cpu_count() or 1  # Ensure at least 1 thread
+        
         self.executor = ThreadPoolExecutor(max_workers=self.num_threads)
 
-        # Initialize the running set
-        self.running_jobs = set()
-
-        # Initialize the done set
-        self.done_jobs = set()
-
-
     def __submit__(self, execute_job, params, job_id):
-        # Submit the job to the ThreadPoolExecutor
-        self.executor.submit(execute_job, params, job_id)
+        try:
+            future = self.executor.submit(execute_job, params, job_id)
+            
+            # Add a callback to handle job completion
+            future.add_done_callback(lambda f: self._handle_job_done(job_id, f))
+        except Exception as e:
+            # Log the exception
+            logger.error(f"Error submitting job {job_id}: {str(e)}")
+
+    def _handle_job_done(self, job_id, future):
+        # Check for exception in the executed job
+        try:
+            result = future.result()  # This will re-raise any exception caught during job execution
+            # Log the job completion
+        except Exception as e:
+            # Log the exception
+            logger.error(f"Error during execution of job {job_id}: {str(e)}")
 
     def __shutdown__(self):
-        # Shutdown the ThreadPool
         self.executor.shutdown(wait=True)
-
-    def job_is_running(self, job_id):
-        # Check the status of a job
-        # Return True if the job is still running
-        # Return False if the job is done
-        if job_id in self.running_jobs:
-            return True
-        elif job_id in self.done_jobs:
-            return False
-        else:
-            return False  

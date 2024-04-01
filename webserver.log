@@ -1,15 +1,5 @@
-[2024-04-01 14:14:51] INFO in unit_tests: Unit test jobs passed
-[2024-04-01 14:14:51] INFO in unit_tests: New job ids:
-[2024-04-01 14:14:51] INFO in unit_tests: {'3': 'done'}
-[2024-04-01 14:14:51] INFO in unit_tests: {'2': 'done'}
-[2024-04-01 14:14:51] INFO in unit_tests: {'1': 'done'}
-[2024-04-01 14:14:51] INFO in unit_tests: Setting up unittests
-[2024-04-01 14:14:52] INFO in unit_tests: Unit test jobs passed
-[2024-04-01 14:14:52] INFO in unit_tests: Old number of jobs:
-[2024-04-01 14:14:52] INFO in unit_tests: 3
-[2024-04-01 14:14:52] INFO in unit_tests: New number of jobs:
-[2024-04-01 14:14:52] INFO in unit_tests: 6
-[2024-04-01 14:14:52] INFO in unit_tests: Setting up unittests
-[2024-04-01 14:14:52] INFO in unit_tests: Shutting down server
-[2024-04-01 14:14:52] INFO in unit_tests: Unit test graceful_shutdown passed
-[2024-04-01 14:14:52] INFO in unit_tests: Tearing down unittests
+[2024-04-01 14:51:44] INFO in data_parser: Got question: Percent of adults who achieve at least 150 minutes a week of moderate-intensity aerobic physical activity or 75 minutes a week of vigorous-intensity aerobic activity (or an equivalent combination) and outputted 1 result.
+[2024-04-01 14:51:44] INFO in routes: Entering get_response with job_id: 5
+[2024-04-01 14:51:44] INFO in routes: Exiting get_response with job_id: 5
+[2024-04-01 14:57:41] INFO in unit_tests: Setting up unittests
+[2024-04-01 14:57:41] INFO in unit_tests: Tearing down unittests
