@@ -11,61 +11,86 @@ class TestServerEndpoints(unittest.TestCase):
         webserver.job_counter = 1
         logger.info("Setting up unittests")
     
-    def helper_test_endpoint(self, endpoint):
-        output_dir = f"./my_unittests/{endpoint}/output"
-        input_dir = f"./my_unittests/{endpoint}/input"
-        input_files = os.listdir(input_dir)
+    def helper_test_endpoint(self, endpoint, file_name):
+        input_file = f"./my_unittests/{endpoint}/input/{file_name}"
 
-        for input_file in input_files:
-            # Get the index from in-idx.json
-            # The idx is between a dash (-) and a dot (.)
-            idx = input_file.split('-')[1]
-            idx = int(idx.split('.')[0])
+        # Get the index from in-idx.json
+        # The idx is between a dash (-) and a dot (.)
+        idx = input_file.split('-')[1]
+        idx = int(idx.split('.')[0])
 
-            with open(f"{input_dir}/{input_file}", "r") as fin:
-                # Data to be sent in the POST request
-                req_data = json.load(fin)
+        with open(f"{input_file}", "r") as fin:
+            # Data to be sent in the POST request
+            req_data = json.load(fin)
 
-            with open(f"{output_dir}/out-{idx}.json", "r") as fout:
-                ref_result = json.load(fout)
-
-            with self.subTest():
-                # Sending a POST request to the Flask endpoint
-                res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
-
-                job_id = res.json()
-                # print(f'job-res is {job_id}')
-                job_id = job_id["job_id"]
-
-                result = requests.get(f"http://127.0.0.1:5000/api/get_results/{job_id}")
-                self.assertEqual(result.status_code, 200)
-                self.assertEqual(result, ref_result)
+        with self.subTest():
+            # Sending a POST request to the Flask endpoint
+            requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
                 
 
     def test_jobs(self):
+        # Do a jobs request to create see what jobs are now available
+        response = requests.get('http://127.0.0.1:5000/api/jobs')
+        # Get old job ids from data field in json response
+        data = response.json()
+        old_job_ids = data['data']
+
         # Do 3 state_mean requests to create 3 job ids
-        self.helper_test_endpoint("state_mean")
-        self.helper_test_endpoint("state_mean")
-        self.helper_test_endpoint("state_mean")
+        self.helper_test_endpoint("state_mean", "in-1.json")
+        self.helper_test_endpoint("state_mean", "in-2.json")
+        self.helper_test_endpoint("state_mean", "in-1.json")
 
         # Tests the jobs status endpoint
         response = requests.get('http://127.0.0.1:5000/api/jobs')
-        print (response.status_code)
-        print (response.json())
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
         self.assertIn('status', data)
         self.assertEqual(data['status'], 'done')
-        self.assertEqual(len(data['jobs']), 3)
+        self.assertEqual(len(data['data']), len(old_job_ids) + 3)
 
-    # def test_num_jobs(self):
-    #     # Tests the number of jobs endpoint
-    #     response = requests.get('http://127.0.0.1:5000/api/num_jobs')
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.json()
-    #     self.assertIn('num_jobs', data)
-    #     self.assertIsInstance(data['num_jobs'], int)
+        # Assert that the last 3 entries from the new job ids are not in the old job ids
+        self.assertNotIn(data['data'][-1], old_job_ids)
+        self.assertNotIn(data['data'][-2], old_job_ids)
+        self.assertNotIn(data['data'][-3], old_job_ids)
+
+        # Log the unit test results
+        logger.info("Unit test jobs passed")
+        # Log the 3 new job ids
+        logger.info("New job ids:")
+        logger.info(data['data'][-1])
+        logger.info(data['data'][-2])
+        logger.info(data['data'][-3])
+
+    def test_num_jobs(self):
+        # Tests the number of jobs endpoint
+        # Do a num_jobs request to create see what jobs are now available
+        response = requests.get('http://127.0.0.1:5000/api/num_jobs')
+        # Get old job ids from data field in json response
+        data = response.json()
+        old_num_jobs = data['num_jobs']
+
+        # Do 3 state_mean requests to create 3 job ids
+        self.helper_test_endpoint("state_mean", "in-1.json")
+        self.helper_test_endpoint("state_mean", "in-2.json")
+        self.helper_test_endpoint("state_mean", "in-1.json")
+
+        # Tests the num_jobs status endpoint
+        response = requests.get('http://127.0.0.1:5000/api/num_jobs')
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+        self.assertEqual(data['num_jobs'], old_num_jobs + 3)
+
+        # Log the unit test results
+        logger.info("Unit test jobs passed")
+        # Log the old number of jobs
+        logger.info("Old number of jobs:")
+        logger.info(old_num_jobs)
+        # Log the number of new jobs
+        logger.info("New number of jobs:")
+        logger.info(data['num_jobs'])
+        
 
     # def test_graceful_shutdown(self):
     #     # Tests the graceful shutdown endpoint

@@ -291,7 +291,6 @@ def num_jobs():
     # Respond with the number of jobs that have been submitted
     return jsonify({"num_jobs": webserver.job_counter - 1})
 
-
 # You can check localhost in your browser to see what this displays
 @webserver.route('/')
 @webserver.route('/index')
