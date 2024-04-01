@@ -1,14 +1,15 @@
-[2024-04-01 13:47:52] INFO in unit_tests: Setting up unittests
-[2024-04-01 13:47:52] INFO in unit_tests: Setting up unittests
-[2024-04-01 13:47:52] INFO in unit_tests: Unit test jobs passed
-[2024-04-01 13:47:52] INFO in unit_tests: New job ids:
-[2024-04-01 13:47:52] INFO in unit_tests: {'21': 'running'}
-[2024-04-01 13:47:52] INFO in unit_tests: {'20': 'done'}
-[2024-04-01 13:47:52] INFO in unit_tests: {'19': 'done'}
-[2024-04-01 13:47:52] INFO in unit_tests: Setting up unittests
-[2024-04-01 13:47:52] INFO in unit_tests: Unit test jobs passed
-[2024-04-01 13:47:52] INFO in unit_tests: Old number of jobs:
-[2024-04-01 13:47:52] INFO in unit_tests: 21
-[2024-04-01 13:47:52] INFO in unit_tests: New number of jobs:
-[2024-04-01 13:47:52] INFO in unit_tests: 24
-[2024-04-01 13:47:52] INFO in unit_tests: Tearing down unittests
+[2024-04-01 14:14:51] INFO in unit_tests: Unit test jobs passed
+[2024-04-01 14:14:51] INFO in unit_tests: New job ids:
+[2024-04-01 14:14:51] INFO in unit_tests: {'3': 'done'}
+[2024-04-01 14:14:51] INFO in unit_tests: {'2': 'done'}
+[2024-04-01 14:14:51] INFO in unit_tests: {'1': 'done'}
+[2024-04-01 14:14:51] INFO in unit_tests: Setting up unittests
+[2024-04-01 14:14:52] INFO in unit_tests: Unit test jobs passed
+[2024-04-01 14:14:52] INFO in unit_tests: Old number of jobs:
+[2024-04-01 14:14:52] INFO in unit_tests: 3
+[2024-04-01 14:14:52] INFO in unit_tests: New number of jobs:
+[2024-04-01 14:14:52] INFO in unit_tests: 6
+[2024-04-01 14:14:52] INFO in unit_tests: Setting up unittests
+[2024-04-01 14:14:52] INFO in unit_tests: Shutting down server
+[2024-04-01 14:14:52] INFO in unit_tests: Unit test graceful_shutdown passed
+[2024-04-01 14:14:52] INFO in unit_tests: Tearing down unittests

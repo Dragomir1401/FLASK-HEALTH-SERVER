@@ -91,11 +91,10 @@ class TestServerEndpoints(unittest.TestCase):
         logger.info("New number of jobs:")
         logger.info(data['num_jobs'])
         
-
-    def test_graceful_shutdown(self):
+    def test_zzz_graceful_shutdown(self):
         # Test that the server sends 503 Unavailable after shutdown
         # Send a shutdown request
-        response = requests.post('http://127.0.0.1:5000/api/graceful_shutdown')
+        response = requests.get('http://127.0.0.1:5000/api/graceful_shutdown')
         self.assertEqual(response.status_code, 200)
 
         logger.info("Shutting down server")
