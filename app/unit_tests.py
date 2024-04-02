@@ -1,3 +1,4 @@
+import time
 import unittest
 import requests
 from app import webserver
@@ -8,8 +9,8 @@ import os
 class TestServerEndpoints(unittest.TestCase):
     def setUp(self):
         # This method will run before each test method.
-        webserver.job_counter = 1
         logger.info("Setting up unittests")
+        time.sleep(1)
     
     def helper_test_endpoint(self, endpoint, file_name):
         input_file = f"./my_unittests/{endpoint}/input/{file_name}"
@@ -24,12 +25,19 @@ class TestServerEndpoints(unittest.TestCase):
             req_data = json.load(fin)
 
         with self.subTest():
-            # Sending a POST request to the Flask endpoint
-            res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
-            job_id = res.json()
-            job_id = job_id["job_id"]
-            result = requests.get(f"http://127.0.0.1:5000/api/get_results/{job_id}")
+            timeout = 1
+            poll_interval = 0.1
+            while True:
+                # Sending a POST request to the Flask endpoint
+                res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
+                job_id = res.json()
+                job_id = job_id["job_id"]
 
+                result = requests.get(f"http://127.0.0.1:5000/api/get_results/{job_id}")
+                
+                # If result contains status done then break the loop
+                if result.json()['status'] == 'done':
+                    break
             return result
 
     def test_state_mean(self):
@@ -50,7 +58,6 @@ class TestServerEndpoints(unittest.TestCase):
         key, val = data.keys(), data.values()
 
         self.assertEqual(key, key_ref)
-        print (val)
 
         # Extract the value from the dictionary dict_values([value])
         val = list(val)[0]
@@ -60,6 +67,23 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Log the unit test results
         logger.info("Unit test state_mean passed")
+
+    def test_best5(self):
+        # Read ref results from out-idx.json
+        with open("./my_unittests/best5/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Tests the best5 endpoint
+        result = self.helper_test_endpoint("best5", "in-1.json")
+        self.assertEqual(result.status_code, 200)
+
+        data = result.json()
+        data = data["data"]
+
+        self.assertEqual(ref_result, data)
+
+        # Log the unit test results
+        logger.info("Unit test best5 passed")
 
     def test_jobs(self):
         # Do a jobs request to create see what jobs are now available
