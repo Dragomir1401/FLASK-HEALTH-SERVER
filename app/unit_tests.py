@@ -1,7 +1,7 @@
 import time
 import unittest
 import requests
-from app import webserver
+from time import sleep
 from app.logger import logger
 import json
 import os
@@ -10,7 +10,7 @@ class TestServerEndpoints(unittest.TestCase):
     def setUp(self):
         # This method will run before each test method.
         logger.info("Setting up unittests")
-        time.sleep(1)
+        sleep(2)
     
     def helper_test_endpoint(self, endpoint, file_name):
         input_file = f"./my_unittests/{endpoint}/input/{file_name}"
@@ -25,8 +25,6 @@ class TestServerEndpoints(unittest.TestCase):
             req_data = json.load(fin)
 
         with self.subTest():
-            timeout = 1
-            poll_interval = 0.1
             while True:
                 # Sending a POST request to the Flask endpoint
                 res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
@@ -38,6 +36,7 @@ class TestServerEndpoints(unittest.TestCase):
                 # If result contains status done then break the loop
                 if result.json()['status'] == 'done':
                     break
+
             return result
 
     def test_state_mean(self):
@@ -85,6 +84,23 @@ class TestServerEndpoints(unittest.TestCase):
         # Log the unit test results
         logger.info("Unit test best5 passed")
 
+    def test_worst5(self):
+        # Read ref results from out-idx.json
+        with open("./my_unittests/worst5/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Tests the worst5 endpoint
+        result = self.helper_test_endpoint("worst5", "in-1.json")
+        self.assertEqual(result.status_code, 200)
+
+        data = result.json()
+        data = data["data"]
+
+        self.assertEqual(ref_result, data)
+
+        # Log the unit test results
+        logger.info("Unit test worst5 passed")
+
     def test_jobs(self):
         # Do a jobs request to create see what jobs are now available
         response = requests.get('http://127.0.0.1:5000/api/jobs')
@@ -94,7 +110,9 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Do 3 state_mean requests to create 3 job ids
         self.helper_test_endpoint("state_mean", "in-1.json")
+        sleep(1)
         self.helper_test_endpoint("state_mean", "in-2.json")
+        sleep(1)
         self.helper_test_endpoint("state_mean", "in-1.json")
 
         # Tests the jobs status endpoint
@@ -129,7 +147,9 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Do 3 state_mean requests to create 3 job ids
         self.helper_test_endpoint("state_mean", "in-1.json")
+        sleep(1)
         self.helper_test_endpoint("state_mean", "in-2.json")
+        sleep(1)
         self.helper_test_endpoint("state_mean", "in-1.json")
 
         # Tests the num_jobs status endpoint
