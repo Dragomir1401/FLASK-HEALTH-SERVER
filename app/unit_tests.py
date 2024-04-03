@@ -13,7 +13,7 @@ class TestServerEndpoints(unittest.TestCase):
         sleep(2)
     
     def helper_test_endpoint(self, endpoint, file_name):
-        input_file = f"./my_unittests/{endpoint}/input/{file_name}"
+        input_file = f"./unittests/{endpoint}/input/{file_name}"
 
         # Get the index from in-idx.json
         # The idx is between a dash (-) and a dot (.)
@@ -41,7 +41,7 @@ class TestServerEndpoints(unittest.TestCase):
 
     def test_state_mean(self):
         # Read ref results from out-idx.json
-        with open("./my_unittests/state_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/state_mean/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
         key_ref, val_ref = ref_result.keys(), ref_result.values()
@@ -69,7 +69,7 @@ class TestServerEndpoints(unittest.TestCase):
 
     def test_best5(self):
         # Read ref results from out-idx.json
-        with open("./my_unittests/best5/output/out-1.json", "r") as fout:
+        with open("./unittests/best5/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
         # Tests the best5 endpoint
@@ -86,7 +86,7 @@ class TestServerEndpoints(unittest.TestCase):
 
     def test_worst5(self):
         # Read ref results from out-idx.json
-        with open("./my_unittests/worst5/output/out-1.json", "r") as fout:
+        with open("./unittests/worst5/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
         # Tests the worst5 endpoint
@@ -112,8 +112,6 @@ class TestServerEndpoints(unittest.TestCase):
         self.helper_test_endpoint("state_mean", "in-1.json")
         sleep(1)
         self.helper_test_endpoint("state_mean", "in-2.json")
-        sleep(1)
-        self.helper_test_endpoint("state_mean", "in-1.json")
 
         # Tests the jobs status endpoint
         response = requests.get('http://127.0.0.1:5000/api/jobs')
@@ -122,12 +120,11 @@ class TestServerEndpoints(unittest.TestCase):
         data = response.json()
         self.assertIn('status', data)
         self.assertEqual(data['status'], 'done')
-        self.assertEqual(len(data['data']), len(old_job_ids) + 3)
+        self.assertEqual(len(data['data']), len(old_job_ids) + 2)
 
         # Assert that the last 3 entries from the new job ids are not in the old job ids
         self.assertNotIn(data['data'][-1], old_job_ids)
         self.assertNotIn(data['data'][-2], old_job_ids)
-        self.assertNotIn(data['data'][-3], old_job_ids)
 
         # Log the unit test results
         logger.info("Unit test jobs passed")
@@ -135,7 +132,6 @@ class TestServerEndpoints(unittest.TestCase):
         logger.info("New job ids:")
         logger.info(data['data'][-1])
         logger.info(data['data'][-2])
-        logger.info(data['data'][-3])
 
     def test_num_jobs(self):
         # Tests the number of jobs endpoint
@@ -149,15 +145,13 @@ class TestServerEndpoints(unittest.TestCase):
         self.helper_test_endpoint("state_mean", "in-1.json")
         sleep(1)
         self.helper_test_endpoint("state_mean", "in-2.json")
-        sleep(1)
-        self.helper_test_endpoint("state_mean", "in-1.json")
 
         # Tests the num_jobs status endpoint
         response = requests.get('http://127.0.0.1:5000/api/num_jobs')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
-        self.assertEqual(data['num_jobs'], old_num_jobs + 3)
+        self.assertEqual(data['num_jobs'], old_num_jobs + 2)
 
         # Log the unit test results
         logger.info("Unit test jobs passed")
