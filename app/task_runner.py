@@ -21,7 +21,7 @@ class ThreadPool:
             future.add_done_callback(lambda f: self._handle_job_done(job_id, f))
         except Exception as e:
             # Log the exception
-            logger.error(f"Error submitting job {job_id}: {str(e)}")
+            logger.info(f"Error submitting job {job_id}: {str(e)}")
 
     def _handle_job_done(self, job_id, future):
         # Check for exception in the executed job
@@ -30,7 +30,7 @@ class ThreadPool:
             # Log the job completion
         except Exception as e:
             # Log the exception
-            logger.error(f"Error during execution of job {job_id}: {str(e)}")
+            logger.info(f"Error during execution of job {job_id}: {str(e)}")
 
     def __shutdown__(self):
         self.executor.shutdown(wait=True)

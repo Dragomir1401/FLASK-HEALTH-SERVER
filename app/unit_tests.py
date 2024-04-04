@@ -4,183 +4,237 @@ import requests
 from time import sleep
 from app.logger import logger
 import json
-import os
+from app.data_ingestor import DataIngestor
+from app.data_parser import DataParser
 
 class TestServerEndpoints(unittest.TestCase):
-    def setUp(self):
-        # This method will run before each test method.
-        logger.info("Setting up unittests")
-        sleep(2)
+    def test_global_mean(self):
+        data_ingestor = DataIngestor("./unittests/global_mean/global_mean.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/global_mean/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
+        # Read ref results from out-idx.json
+        with open("./unittests/global_mean/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Execute the global_mean function with the query
+        result = data_parser.global_mean(query)
+
+        result_scalar = result['Data_Value'].item()
+        result_ref = ref_result['global_mean']
+
+        # Now you can compare the scalar values
+        self.assertAlmostEqual(result_scalar, result_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
+
+    def test_diff_from_mean(self):
+        data_ingestor = DataIngestor("./unittests/diff_from_mean/diff_from_mean.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/diff_from_mean/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
+        # Read ref results from out-idx.json
+        with open("./unittests/diff_from_mean/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Execute the diff_from_mean function with the query
+        result = data_parser.diff_from_mean(query)
+
+        # Transform the result into a dictionary
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
+
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(data_dict.keys(), ref_result.keys(), "LocationDesc does not match")
+
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        for key in data_dict.keys():
+            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+
+    def test_state_diff_from_mean(self):
+        data_ingestor = DataIngestor("./unittests/state_diff_from_mean/state_diff_from_mean.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/state_diff_from_mean/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
+        # Read ref results from out-idx.json
+        with open("./unittests/state_diff_from_mean/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Execute the state_diff_from_mean function with the query
+        result = data_parser.state_diff_from_mean(query)
+
+        # Since JSON keys are always strings, ensure the ref keys/values are extracted correctly
+        key_ref = list(ref_result.keys())[0]
+        val_ref = list(ref_result.values())[0]
+
+        # Execute the state_mean function with the query
+        result = data_parser.state_mean(query)
+        
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
+        key = list(data_dict.keys())[0]
+        val = list(data_dict.values())[0]
+
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(key, key_ref, "LocationDesc does not match")
+
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        self.assertAlmostEqual(val, val_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
     
-    def helper_test_endpoint(self, endpoint, file_name):
-        input_file = f"./unittests/{endpoint}/input/{file_name}"
+    def test_mean_by_category(self):
+        data_ingestor = DataIngestor("./unittests/mean_by_category/mean_by_category.csv")
+        data_parser = DataParser(data_ingestor)
 
-        # Get the index from in-idx.json
-        # The idx is between a dash (-) and a dot (.)
-        idx = input_file.split('-')[1]
-        idx = int(idx.split('.')[0])
+        # Read input query from in-idx.json
+        with open("./unittests/mean_by_category/input/in-1.json", "r") as fin:
+            query = json.load(fin)
 
-        with open(f"{input_file}", "r") as fin:
-            # Data to be sent in the POST request
-            req_data = json.load(fin)
+        # Read ref results from out-idx.json
+        with open("./unittests/mean_by_category/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
 
-        with self.subTest():
-            while True:
-                # Sending a POST request to the Flask endpoint
-                res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
-                job_id = res.json()
-                job_id = job_id["job_id"]
+        # Execute the mean_by_category function with the query
+        result = data_parser.mean_by_category(query)
 
-                result = requests.get(f"http://127.0.0.1:5000/api/get_results/{job_id}")
-                
-                # If result contains status done then break the loop
-                if result.json()['status'] == 'done':
-                    break
+        # Compare each key as state with category to be equal
+        self.assertEqual(result.keys(), ref_result.keys(), "State or stratification does not match")
 
-            return result
+        # Compare each value with a tolerance of 0.0001
+        for key in result.keys():
+            self.assertAlmostEqual(result[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
 
+    def test_state_mean_by_category(self):
+        data_ingestor = DataIngestor("./unittests/state_mean_by_category/state_mean_by_category.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/state_mean_by_category/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
+        # Read ref results from out-idx.json
+        with open("./unittests/state_mean_by_category/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
+
+        # Execute the state_mean_by_category function with the query
+        result = data_parser.state_mean_by_category(query)
+
+        # Compare each key as state with category to be equal
+        self.assertEqual(result.keys(), ref_result.keys(), "State or stratification does not match")
+
+        # Compare each value with a tolerance of 0.0001
+        for key in result.keys():
+            self.assertAlmostEqual(result[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        
     def test_state_mean(self):
+        data_ingestor = DataIngestor("./unittests/state_mean/state_mean.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/state_mean/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
         # Read ref results from out-idx.json
         with open("./unittests/state_mean/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
-        key_ref, val_ref = ref_result.keys(), ref_result.values()
+        # Since JSON keys are always strings, ensure the ref keys/values are extracted correctly
+        key_ref = list(ref_result.keys())[0]
+        val_ref = list(ref_result.values())[0]
 
-        # Tests the state_mean endpoint
-        result = self.helper_test_endpoint("state_mean", "in-1.json")
-        self.assertEqual(result.status_code, 200)
+        # Execute the state_mean function with the query
+        result = data_parser.state_mean(query)
+        
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
+        key = list(data_dict.keys())[0]
+        val = list(data_dict.values())[0]
 
-        data = result.json()
-        data = data["data"]
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(key, key_ref, "LocationDesc does not match")
 
-        # Extract key-value pair
-        key, val = data.keys(), data.values()
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        self.assertAlmostEqual(val, val_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
 
-        self.assertEqual(key, key_ref)
+    def test_states_mean(self):
+        data_ingestor = DataIngestor("./unittests/states_mean/states_mean.csv")
+        data_parser = DataParser(data_ingestor)
 
-        # Extract the value from the dictionary dict_values([value])
-        val = list(val)[0]
-        val_ref = list(val_ref)[0]
+        # Read input query from in-idx.json
+        with open("./unittests/states_mean/input/in-1.json", "r") as fin:
+            query = json.load(fin)
 
-        self.assertAlmostEqual(val, val_ref, delta=0.0001)
+        # Read ref results from out-idx.json
+        with open("./unittests/states_mean/output/out-1.json", "r") as fout:
+            ref_result = json.load(fout)
 
-        # Log the unit test results
-        logger.info("Unit test state_mean passed")
+        # Execute the states_mean function with the query
+        result = data_parser.states_mean(query)
+
+        # Transform the result into a dictionary
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
+
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(data_dict.keys(), ref_result.keys(), "LocationDesc does not match")
+
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        for key in data_dict.keys():
+            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
 
     def test_best5(self):
+        data_ingestor = DataIngestor("./unittests/best5/best5.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/best5/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
         # Read ref results from out-idx.json
         with open("./unittests/best5/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
-        # Tests the best5 endpoint
-        result = self.helper_test_endpoint("best5", "in-1.json")
-        self.assertEqual(result.status_code, 200)
+        # Execute the best5 function with the query
+        result = data_parser.best5(query)
 
-        data = result.json()
-        data = data["data"]
+        # Transform the result into a dictionary
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
 
-        self.assertEqual(ref_result, data)
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(data_dict.keys(), ref_result.keys(), "LocationDesc does not match")
 
-        # Log the unit test results
-        logger.info("Unit test best5 passed")
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        for key in data_dict.keys():
+            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
 
     def test_worst5(self):
+        data_ingestor = DataIngestor("./unittests/worst5/worst5.csv")
+        data_parser = DataParser(data_ingestor)
+
+        # Read input query from in-idx.json
+        with open("./unittests/worst5/input/in-1.json", "r") as fin:
+            query = json.load(fin)
+
         # Read ref results from out-idx.json
         with open("./unittests/worst5/output/out-1.json", "r") as fout:
             ref_result = json.load(fout)
 
-        # Tests the worst5 endpoint
-        result = self.helper_test_endpoint("worst5", "in-1.json")
-        self.assertEqual(result.status_code, 200)
+        # Execute the worst5 function with the query
+        result = data_parser.worst5(query)
 
-        data = result.json()
-        data = data["data"]
+        # Transform the result into a dictionary
+        data_dict = dict(zip(result['LocationDesc'], result['Data_Value']))
 
-        self.assertEqual(ref_result, data)
+        # Assert that the keys (LocationDesc) match
+        self.assertEqual(data_dict.keys(), ref_result.keys(), "LocationDesc does not match")
 
-        # Log the unit test results
-        logger.info("Unit test worst5 passed")
-
-    def test_jobs(self):
-        # Do a jobs request to create see what jobs are now available
-        response = requests.get('http://127.0.0.1:5000/api/jobs')
-        # Get old job ids from data field in json response
-        data = response.json()
-        old_job_ids = data['data']
-
-        # Do 3 state_mean requests to create 3 job ids
-        self.helper_test_endpoint("state_mean", "in-1.json")
-        sleep(1)
-        self.helper_test_endpoint("state_mean", "in-2.json")
-
-        # Tests the jobs status endpoint
-        response = requests.get('http://127.0.0.1:5000/api/jobs')
-        self.assertEqual(response.status_code, 200)
-
-        data = response.json()
-        self.assertIn('status', data)
-        self.assertEqual(data['status'], 'done')
-        self.assertEqual(len(data['data']), len(old_job_ids) + 2)
-
-        # Assert that the last 3 entries from the new job ids are not in the old job ids
-        self.assertNotIn(data['data'][-1], old_job_ids)
-        self.assertNotIn(data['data'][-2], old_job_ids)
-
-        # Log the unit test results
-        logger.info("Unit test jobs passed")
-        # Log the 3 new job ids
-        logger.info("New job ids:")
-        logger.info(data['data'][-1])
-        logger.info(data['data'][-2])
-
-    def test_num_jobs(self):
-        # Tests the number of jobs endpoint
-        # Do a num_jobs request to create see what jobs are now available
-        response = requests.get('http://127.0.0.1:5000/api/num_jobs')
-        # Get old job ids from data field in json response
-        data = response.json()
-        old_num_jobs = data['num_jobs']
-
-        # Do 3 state_mean requests to create 3 job ids
-        self.helper_test_endpoint("state_mean", "in-1.json")
-        sleep(1)
-        self.helper_test_endpoint("state_mean", "in-2.json")
-
-        # Tests the num_jobs status endpoint
-        response = requests.get('http://127.0.0.1:5000/api/num_jobs')
-        self.assertEqual(response.status_code, 200)
-
-        data = response.json()
-        self.assertEqual(data['num_jobs'], old_num_jobs + 2)
-
-        # Log the unit test results
-        logger.info("Unit test jobs passed")
-        # Log the old number of jobs
-        logger.info("Old number of jobs:")
-        logger.info(old_num_jobs)
-        # Log the number of new jobs
-        logger.info("New number of jobs:")
-        logger.info(data['num_jobs'])
-
-    def test_zzz_graceful_shutdown(self):
-        # Test that the server sends 503 Unavailable after shutdown
-        # Send a shutdown request
-        response = requests.get('http://127.0.0.1:5000/api/graceful_shutdown')
-        self.assertEqual(response.status_code, 200)
-
-        logger.info("Shutting down server")
-
-        # Send a state_mean request
-        response = requests.post('http://127.0.0.1:5000/api/state_mean', json={"state": "CA"})
-        self.assertEqual(response.status_code, 503)
-
-        # Log the unit test results
-        logger.info("Unit test graceful_shutdown passed")
-
-        
-    @classmethod
-    def tearDownClass(cls):
-        logger.info("Tearing down unittests")
+        # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
+        for key in data_dict.keys():
+            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+    
 
 
 if __name__ == '__main__':

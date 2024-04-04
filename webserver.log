@@ -1,7 +1,1 @@
-[2024-04-03 16:21:06] INFO in routes: Exiting worst5_request with job_id: 92
-[2024-04-03 16:21:06] INFO in data_parser: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-03 16:21:06] INFO in routes: Entering get_response with job_id: 92
-[2024-04-03 16:21:06] INFO in routes: Exiting get_response with job_id: 92
-[2024-04-03 16:21:08] INFO in routes: Shutting down gracefully
-[2024-04-03 16:21:08] INFO in routes: Exiting graceful_shutdown
-[2024-04-03 16:21:08] INFO in routes: Server is unable to accept new requests. It is closed.
+[2024-04-04 12:34:32] INFO in unit_tests: Tearing down unittests

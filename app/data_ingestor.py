@@ -12,7 +12,14 @@ class DataIngestor:
         if not os.path.exists('results'):
             os.makedirs('results')
 
+        if csv_path:
+            self.data = pd.read_csv(csv_path)
+        else:
+            self.data = None
+    
+    def read_test_csv(self, csv_path: str):
         self.data = pd.read_csv(csv_path)
+        return self.data
 
     def __get__(self):
         return self.data

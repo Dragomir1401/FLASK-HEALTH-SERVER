@@ -7,6 +7,7 @@ from app.logger import logger
 class DataParser:
     def __init__(self, data: DataIngestor):
         self.job_maintainer = JobMaintainer()
+        self.data_ingestor = data
         self.data = data.__get__()
 
         self.questions_best_is_min = [
@@ -23,6 +24,7 @@ class DataParser:
             'Percent of adults who achieve at least 300 minutes a week of moderate-intensity aerobic physical activity or 150 minutes a week of vigorous-intensity aerobic activity (or an equivalent combination)',
             'Percent of adults who engage in muscle-strengthening activities on 2 or more days a week',
         ]
+    
 
     def json_writer(self, data, job_id):
         # Use zip to create a dictionary with the structure {state: mean}
@@ -53,7 +55,7 @@ class DataParser:
         # Return data_mean as value
         return data_mean      
 
-    def states_mean(self, data, job_id):
+    def states_mean(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -73,14 +75,17 @@ class DataParser:
         data_mean = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()   
         data_mean = data_mean.sort_values('Data_Value', ascending=best_is_min)
 
-        logger.info(f"Got question: {question} and outputted {len(data_mean)} results.")
+        if job_id is not None:
+            logger.info(f"Got question: {question} and outputted {len(data_mean)} results.")
 
-        # Write the results in results/ directory with the name of the job_id as json file
-        self.json_writer(data_mean, job_id)
+            # Write the results in results/ directory with the name of the job_id as json file
+            self.json_writer(data_mean, job_id)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_mean
 
-    def state_mean(self, data, job_id):
+    def state_mean(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -98,14 +103,17 @@ class DataParser:
         data_mean = data_filtered['Data_Value'].mean()
         data_mean = pd.DataFrame({'LocationDesc': [state], 'Data_Value': [data_mean]})
 
-        logger.info(f"Got question: {question} and outputted 1 result.")
+        if job_id is not None:
+            logger.info(f"Got question: {question} and outputted 1 result.")
 
-        # Write the results in results/ directory with the name of the job_id as json file  
-        self.json_writer(data_mean, job_id)
+            # Write the results in results/ directory with the name of the job_id as json file  
+            self.json_writer(data_mean, job_id)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_mean
 
-    def best5(self, data, job_id):
+    def best5(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -128,14 +136,17 @@ class DataParser:
         # Get the best 5 states
         data_best5 = data_mean.head(5)
 
-        logger.info(f"Got question: {question} and outputted 5 results.")
+        if job_id is not None:
+            logger.info(f"Got question: {question} and outputted 5 results.")
 
-        # Write the results in results/ directory with the name of the job_id as json file
-        self.json_writer(data_best5, job_id)
+            # Write the results in results/ directory with the name of the job_id as json file
+            self.json_writer(data_best5, job_id)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_best5
 
-    def worst5(self, data, job_id):
+    def worst5(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
         
@@ -160,29 +171,35 @@ class DataParser:
 
         logger.info(f"Got question: {question} and outputted 5 results.")
 
-        # Write the results in results/ directory with the name of the job_id as json file
-        self.json_writer(data_worst5, job_id)
+        if job_id is not None:
+            # Write the results in results/ directory with the name of the job_id as json file
+            self.json_writer(data_worst5, job_id)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_worst5
 
-    def global_mean(self, data, job_id):
+    def global_mean(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
         
         # Computes the global mean of the data values for the question in the the interval 2011-2022
         data_mean = self.get_global_mean(data)
 
-        logger.info(f"Got question: {data['question']} and outputted 1 result.")
 
-        # Create output as {"global_mean" : value}
-        data_dict = {"global_mean": data_mean['Data_Value'].values[0]}
-        with open(f'results/{job_id}.json', 'w') as f:
-            # Write field:value pairs in json format
-            json.dump(data_dict, f)
+        if job_id is not None:
+            logger.info(f"Got question: {data['question']} and outputted 1 result.")
 
-        self.job_maintainer.finish_job(job_id)
+            # Create output as {"global_mean" : value}
+            data_dict = {"global_mean": data_mean['Data_Value'].values[0]}
+            with open(f'results/{job_id}.json', 'w') as f:
+                # Write field:value pairs in json format
+                json.dump(data_dict, f)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_mean
 
-    def diff_from_mean(self, data, job_id):
+    def diff_from_mean(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -203,14 +220,17 @@ class DataParser:
         data_diff = data_filtered.groupby('LocationDesc')['Data_Value'].mean().reset_index()
         data_diff['Data_Value'] = global_mean - data_diff['Data_Value']
 
-        logger.info(f"Got question: {question} and outputted {len(data_diff)} results.")
+        if job_id is not None:
+            logger.info(f"Got question: {question} and outputted {len(data_diff)} results.")
 
-        # Write the results in results/ directory with the name of the job_id as json file
-        self.json_writer(data_diff, job_id)
+            # Write the results in results/ directory with the name of the job_id as json file
+            self.json_writer(data_diff, job_id)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_diff
 
-    def state_diff_from_mean(self, data, job_id):
+    def state_diff_from_mean(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -232,17 +252,20 @@ class DataParser:
         data_diff = data_filtered['Data_Value'].mean()
         data_diff = global_mean - data_diff
 
-        logger.info(f"Got question: {question} and outputted 1 result.")
+        if job_id is not None:
+            logger.info(f"Got question: {question} and outputted 1 result.")
 
-        # Create a dict with a value state and the difference
-        data_dict = {state: data_diff}
-        with open(f'results/{job_id}.json', 'w') as f:
-            # Write field:value pairs in json format
-            json.dump(data_dict, f)
+            # Create a dict with a value state and the difference
+            data_dict = {state: data_diff}
+            with open(f'results/{job_id}.json', 'w') as f:
+                # Write field:value pairs in json format
+                json.dump(data_dict, f)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return data_diff
 
-    def mean_by_category(self, data, job_id):
+    def mean_by_category(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
 
@@ -266,14 +289,17 @@ class DataParser:
         for _, row in data_mean.iterrows():
             key = f"('{row['LocationDesc']}', '{row['StratificationCategory1']}', '{row['Stratification1']}')"
             result[key] = row['Data_Value']
+        
+        if job_id is not None:
+            # Save the dictionary as a JSON file in the specified path
+            with open(f'results/{job_id}.json', 'w') as f:
+                json.dump(result, f)
 
-        # Save the dictionary as a JSON file in the specified path
-        with open(f'results/{job_id}.json', 'w') as f:
-            json.dump(result, f)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return result
 
-        self.job_maintainer.finish_job(job_id)
-
-    def state_mean_by_category(self, data, job_id):
+    def state_mean_by_category(self, data, job_id = None):
         # Start job
         self.job_maintainer.start_job(job_id)
         
@@ -300,8 +326,11 @@ class DataParser:
             category_description = f"('{row['StratificationCategory1']}', '{row['Stratification1']}')"
             result[state][category_description] = row['Data_Value']
 
-        # Save the dictionary as a JSON file in the specified path
-        with open(f'results/{job_id}.json', 'w') as f:
-            json.dump(result, f)
+        if job_id is not None:
+            # Save the dictionary as a JSON file in the specified path
+            with open(f'results/{job_id}.json', 'w') as f:
+                json.dump(result, f)
 
-        self.job_maintainer.finish_job(job_id)
+            self.job_maintainer.finish_job(job_id)
+        else:
+            return result
