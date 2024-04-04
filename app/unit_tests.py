@@ -1,13 +1,13 @@
-import time
 import unittest
-import requests
 from time import sleep
-from app.logger import logger
 import json
 from app.data_ingestor import DataIngestor
 from app.data_parser import DataParser
 
 class TestServerEndpoints(unittest.TestCase):
+    def setUp(self):
+        sleep(1)
+
     def test_global_mean(self):
         data_ingestor = DataIngestor("./unittests/global_mean/global_mean.csv")
         data_parser = DataParser(data_ingestor)
@@ -28,6 +28,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Now you can compare the scalar values
         self.assertAlmostEqual(result_scalar, result_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        print ("Test global_mean passed successfully.")
 
     def test_diff_from_mean(self):
         data_ingestor = DataIngestor("./unittests/diff_from_mean/diff_from_mean.csv")
@@ -53,6 +55,8 @@ class TestServerEndpoints(unittest.TestCase):
         # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
         for key in data_dict.keys():
             self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        print("Test diff_from_mean passed successfully.")
 
     def test_state_diff_from_mean(self):
         data_ingestor = DataIngestor("./unittests/state_diff_from_mean/state_diff_from_mean.csv")
@@ -85,6 +89,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
         self.assertAlmostEqual(val, val_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        print("Test state_diff_from_mean passed successfully.") 
     
     def test_mean_by_category(self):
         data_ingestor = DataIngestor("./unittests/mean_by_category/mean_by_category.csv")
@@ -108,6 +114,8 @@ class TestServerEndpoints(unittest.TestCase):
         for key in result.keys():
             self.assertAlmostEqual(result[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
 
+        print("Test mean_by_category passed successfully.")
+
     def test_state_mean_by_category(self):
         data_ingestor = DataIngestor("./unittests/state_mean_by_category/state_mean_by_category.csv")
         data_parser = DataParser(data_ingestor)
@@ -129,6 +137,8 @@ class TestServerEndpoints(unittest.TestCase):
         # Compare each value with a tolerance of 0.0001
         for key in result.keys():
             self.assertAlmostEqual(result[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        print("Test state_mean_by_category passed successfully.")
 
         
     def test_state_mean(self):
@@ -160,6 +170,8 @@ class TestServerEndpoints(unittest.TestCase):
         # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
         self.assertAlmostEqual(val, val_ref, delta=0.0001, msg="Data_Value does not match within the expected range")
 
+        print("Test state_mean passed successfully.")
+
     def test_states_mean(self):
         data_ingestor = DataIngestor("./unittests/states_mean/states_mean.csv")
         data_parser = DataParser(data_ingestor)
@@ -184,6 +196,8 @@ class TestServerEndpoints(unittest.TestCase):
         # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
         for key in data_dict.keys():
             self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
+
+        print("Test states_mean passed successfully.")
 
     def test_best5(self):
         data_ingestor = DataIngestor("./unittests/best5/best5.csv")
@@ -210,6 +224,8 @@ class TestServerEndpoints(unittest.TestCase):
         for key in data_dict.keys():
             self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
 
+        print("Test best5 passed successfully.")
+
     def test_worst5(self):
         data_ingestor = DataIngestor("./unittests/worst5/worst5.csv")
         data_parser = DataParser(data_ingestor)
@@ -234,8 +250,8 @@ class TestServerEndpoints(unittest.TestCase):
         # Assert that the values (Data_Value) are almost equal, with a small delta for floating point comparison
         for key in data_dict.keys():
             self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001, msg="Data_Value does not match within the expected range")
-    
 
+        print("Test worst5 passed successfully.")
 
 if __name__ == '__main__':
     unittest.main()

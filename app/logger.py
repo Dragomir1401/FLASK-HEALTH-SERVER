@@ -1,26 +1,28 @@
+"""This module sets up a logger for the web server. """
 import logging
-from logging.handlers import RotatingFileHandler
 import time
+from logging.handlers import RotatingFileHandler
 
-def setup_logger():
-    logger = logging.getLogger('WebServerLogger')
-    logger.setLevel(logging.INFO)
-    logger.setLevel(logging.ERROR)
+class Logger:
+    def __init__(self):
+        self.logger = self.setup_logger()
 
-    # Create a rotating file handler
-    handler = RotatingFileHandler('webserver.log', maxBytes=10240, backupCount=5)
-    handler.setLevel(logging.INFO)
-    handler.setLevel(logging.ERROR)
+    def setup_logger(self):
+        """Set up a logger for the web server."""
+        logger = logging.getLogger('WebServerLogger')
+        logger.setLevel(logging.INFO)
 
-    # Create a logging format with UTC timestamps
-    formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-    formatter.converter = time.gmtime  # Use UTC time
-    handler.setFormatter(formatter)
+        # Create a rotating file handler
+        handler = RotatingFileHandler('webserver.log', maxBytes=10240, backupCount=5)
+        handler.setLevel(logging.INFO)
 
-    # Add the handler to the logger
-    logger.addHandler(handler)
+        # Create a logging format with UTC timestamps
+        formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
+        formatter.converter = time.gmtime  # Use UTC time
+        handler.setFormatter(formatter)
 
-    return logger
+        # Add the handler to the logger
+        logger.addHandler(handler)
 
-# Initialize logger
-logger = setup_logger()
+        return logger

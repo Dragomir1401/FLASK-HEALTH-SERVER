@@ -1,6 +1,4 @@
 import os
-from queue import Queue
-from threading import Thread, Event
 from concurrent.futures import ThreadPoolExecutor
 from app import logger
 

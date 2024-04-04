@@ -1,8 +1,6 @@
-from app import webserver
-from flask import request, jsonify
-from app.logger import logger
-import os
 import json
+from flask import request, jsonify
+from app import WEB_SERVER as webserver
 
 # Example endpoint definition
 @webserver.route('/api/post_endpoint', methods=['POST'])
@@ -28,7 +26,7 @@ def post_endpoint():
 def get_response(job_id):
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
-    logger.info(f"Entering get_response with job_id: {job_id}")
+    webserver.logger.info(f"Entering get_response with job_id: {job_id}")
 
     # Check if job_id is valid
     # If not, return error
@@ -44,7 +42,7 @@ def get_response(job_id):
 
     # Check if job_id is running
     if webserver.data_parser.job_maintainer.is_job_running(int(job_id)):
-        logger.info(f"Exiting get_response with job_id: {job_id}")
+        webserver.logger.info(f"Exiting get_response with job_id: {job_id}")
         return jsonify({'status': 'running'})
     
     # Check if job_id is done and return the result
@@ -58,7 +56,7 @@ def get_response(job_id):
     with open(f"results/{job_id}.json", "r") as fin:
         res = json.load(fin)
     
-    logger.info(f"Exiting get_response with job_id: {job_id}")
+    webserver.logger.info(f"Exiting get_response with job_id: {job_id}")
     return jsonify({
         'status': 'done',
         'data': res
@@ -71,7 +69,7 @@ def states_mean_request():
     
     # Get request data
     data = request.json
-    logger.info("Entering states_mean_request with data: {data}")
+    webserver.logger.info("Entering states_mean_request with data: {data}")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -82,7 +80,7 @@ def states_mean_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting states_mean_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting states_mean_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -92,7 +90,7 @@ def state_mean_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info("Entering state_mean_request with data: {data}")
+    webserver.logger.info("Entering state_mean_request with data: {data}")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -103,7 +101,7 @@ def state_mean_request():
     # Register job. Don't wait for task to finish
     webserver.tasks_runner.__submit__(webserver.data_parser.state_mean, data, job_id)
 
-    logger.info(f"Exiting state_mean_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting state_mean_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -113,7 +111,7 @@ def best5_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for best5")
+    webserver.logger.info(f"Got request {data} for best5")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -124,7 +122,7 @@ def best5_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting best5_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting best5_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -134,7 +132,7 @@ def worst5_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for worst5")
+    webserver.logger.info(f"Got request {data} for worst5")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -145,7 +143,7 @@ def worst5_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting worst5_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting worst5_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -155,7 +153,7 @@ def global_mean_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for global_mean")
+    webserver.logger.info(f"Got request {data} for global_mean")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -166,7 +164,7 @@ def global_mean_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting global_mean_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting global_mean_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -176,7 +174,7 @@ def diff_from_mean_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for diff_from_mean")
+    webserver.logger.info(f"Got request {data} for diff_from_mean")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -187,7 +185,7 @@ def diff_from_mean_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting diff_from_mean_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting diff_from_mean_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -197,7 +195,7 @@ def state_diff_from_mean_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for state_diff_from_mean")
+    webserver.logger.info(f"Got request {data} for state_diff_from_mean")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -208,7 +206,7 @@ def state_diff_from_mean_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting state_diff_from_mean_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting state_diff_from_mean_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -218,7 +216,7 @@ def mean_by_category_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for mean_by_category")
+    webserver.logger.info(f"Got request {data} for mean_by_category")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -229,7 +227,7 @@ def mean_by_category_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting mean_by_category_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting mean_by_category_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -240,7 +238,7 @@ def state_mean_by_category_request():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
     data = request.json
-    logger.info(f"Got request {data} for state_mean_by_category")
+    webserver.logger.info(f"Got request {data} for state_mean_by_category")
 
     # Get current job_id
     job_id = webserver.job_counter
@@ -251,7 +249,7 @@ def state_mean_by_category_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    logger.info(f"Exiting state_mean_by_category_request with job_id: {job_id}")
+    webserver.logger.info(f"Exiting state_mean_by_category_request with job_id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
@@ -260,7 +258,7 @@ def state_mean_by_category_request():
 def graceful_shutdown():
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
-    logger.info("Shutting down gracefully")
+    webserver.logger.info("Shutting down gracefully")
 
     # Register job. Don't wait for task to finish
     webserver.tasks_runner.__shutdown__()
@@ -268,7 +266,7 @@ def graceful_shutdown():
     # Set shutdown flag
     webserver.is_shutdown = True
 
-    logger.info("Exiting graceful_shutdown")
+    webserver.logger.info("Exiting graceful_shutdown")
     # Return 200 OK
     return jsonify({"message": "Shutting down gracefully"}), 200
 
@@ -277,7 +275,7 @@ def graceful_shutdown():
 def jobs():
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
-    logger.info("Entering get jobs status")
+    webserver.logger.info("Entering get jobs status")
     # Respond with a json with all the job ids and their status
     #  {
     #      "status": "done"
@@ -294,15 +292,15 @@ def jobs():
         elif webserver.data_parser.job_maintainer.is_job_done(job_id):
             jobs.append({job_id: "done"})
 
-    logger.info("Exiting get jobs status")
+    webserver.logger.info("Exiting get jobs status")
     return jsonify({"status": "done", "data": jobs})
 
 @webserver.route('/api/num_jobs', methods=['GET'])
 def num_jobs():
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
-    logger.info("Entering get number of jobs")
-    logger.info("Exiting get number of jobs")
+    webserver.logger.info("Entering get number of jobs")
+    webserver.logger.info("Exiting get number of jobs")
     # Respond with the number of jobs that have been submitted
     return jsonify({"num_jobs": webserver.job_counter - 1})
 
@@ -331,7 +329,7 @@ def get_defined_routes():
 def is_shutdown():
     if webserver.is_shutdown:
         # Log the shutdown message
-        logger.info("Server is unable to accept new requests. It is closed.")
+        webserver.logger.info("Server is unable to accept new requests. It is closed.")
 
         # Respond with a 503 Service Unavailable
         return True
