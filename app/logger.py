@@ -26,3 +26,7 @@ class Logger:
         logger.addHandler(handler)
 
         return logger
+    
+    def info(self, msg, *args, **kwargs):
+        """Log 'msg % args' with severity 'INFO'."""
+        self.logger.info(msg, *args, **kwargs)

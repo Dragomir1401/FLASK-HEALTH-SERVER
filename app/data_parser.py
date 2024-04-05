@@ -1,9 +1,9 @@
 """This module is responsible for parsing the data and returning the results as a JSON file"""
 import json
 import pandas as pd
-from app import WEB_SERVER as web_server
 from app.job_maintainer import JobMaintainer
 from app.data_ingestor import DataIngestor
+from app.logger import Logger
 
 def json_writer(data, job_id):
     """Write the data as a JSON file with the name of the job_id as the filename"""
@@ -22,6 +22,7 @@ class DataParser:
         self.job_maintainer = JobMaintainer()
         self.data_ingestor = data
         self.data = data.get()
+        self.logger = Logger()
 
         self.questions_best_is_min = [
             'Percent of adults aged 18 years and older who have an overweight classification',
@@ -91,7 +92,7 @@ class DataParser:
         data_mean = data_mean.sort_values('Data_Value', ascending=best_is_min)
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
+            self.logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
 
             # Write the results in results/ directory with the name of the job_id as json file
             json_writer(data_mean, job_id)
@@ -123,7 +124,7 @@ class DataParser:
         data_mean = pd.DataFrame({'LocationDesc': [state], 'Data_Value': [data_mean]})
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted 1 result.", question)
+            self.logger.info("Got question: %s and outputted 1 result.", question)
 
             # Write the results in results/ directory with the name of the job_id as json file
             json_writer(data_mean, job_id)
@@ -159,7 +160,7 @@ class DataParser:
         data_best5 = data_mean.head(5)
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted 5 results.", question)
+            self.logger.info("Got question: %s and outputted 5 results.", question)
 
             # Write the results in results/ directory with the name of the job_id as json file
             json_writer(data_best5, job_id)
@@ -194,7 +195,7 @@ class DataParser:
         # Get the worst 5 states
         data_worst5 = data_mean.head(5)
 
-        logger.info("Got question: %s and outputted 5 results.", question)
+        self.logger.info("Got question: %s and outputted 5 results.", question)
 
         if job_id is not None:
             # Write the results in results/ directory with the name of the job_id as json file
@@ -216,7 +217,7 @@ class DataParser:
 
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted 1 result.", data['question'])
+            self.logger.info("Got question: %s and outputted 1 result.", data['question'])
 
             # Create output as {"global_mean" : value}
             data_dict = {"global_mean": data_mean['Data_Value'].values[0]}
@@ -254,7 +255,7 @@ class DataParser:
         data_diff['Data_Value'] = global_mean - data_diff['Data_Value']
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted %d results.", question, len(data_diff))
+            self.logger.info("Got question: %s and outputted %d results.", question, len(data_diff))
 
             # Write the results in results/ directory with the name of the job_id as json file
             json_writer(data_diff, job_id)
@@ -292,7 +293,7 @@ class DataParser:
         data_diff = global_mean - data_diff
 
         if job_id is not None:
-            logger.info("Got question: %s and outputted 1 result.", question)
+            self.logger.info("Got question: %s and outputted 1 result.", question)
 
             # Create a dict with a value state and the difference
             data_dict = {state: data_diff}
@@ -326,7 +327,7 @@ class DataParser:
         data_mean = data_filtered.groupby(['LocationDesc', 'StratificationCategory1',
                                            'Stratification1'])['Data_Value'].mean().reset_index()
 
-        logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
+        self.logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
 
         # Prepare the result dictionary
         result = {}
@@ -378,7 +379,7 @@ class DataParser:
             .reset_index()
         )
 
-        logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
+        self.logger.info("Got question: %s and outputted %d results.", question, len(data_mean))
 
         # Prepare the result dictionary
         result = {state: {}}

@@ -5,7 +5,6 @@ from flask import Flask
 from app.data_ingestor import DataIngestor
 from app.data_parser import DataParser
 from app.task_runner import ThreadPool
-from app.logger import Logger
 
 WEB_SERVER = Flask(__name__)
 WEB_SERVER.tasks_runner = ThreadPool()
@@ -15,6 +14,5 @@ WEB_SERVER.data_ingestor = DataIngestor("nutrition_activity_obesity_usa_subset.c
 WEB_SERVER.data_parser = DataParser(WEB_SERVER.data_ingestor)
 WEB_SERVER.job_counter = 1
 WEB_SERVER.is_shutdown = False
-WEB_SERVER.logger = Logger()
 
 from app import routes
