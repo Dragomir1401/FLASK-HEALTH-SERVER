@@ -1,0 +1,136 @@
+Nume: Dragomir Andrei
+Grupă: 332CA
+
+# Assignment NR 1
+
+## Structure
+
+The project is structured in the following way:
+
+    - app/
+        -__init__.py - the main file that initializes the Flask app
+        - data_ingestor.py - the file that contains the logic for ingesting data
+        - data_parser.py - the file that contains the logic for parsing data for routes
+        - job_maintainer.py - the file that contains the logic for maintaining the jobs with ids and running/done
+        - logger.py - the file that contains the logic for logging
+        - routes.py - the file that contains the logic for the routes API
+        - task_runner.py - the file that contains the logic for running the tasks in a threadpool
+        - unit_tests.py - the file that contains the logic for the unit testing the calculation functions
+
+    The logic starts with **init**.py that initializes the Flask app and creates its subobjects the data_ingestor,
+data_parser, job_maintainer, logger. It imports the routes, which handle the POST and GET requests for the server.
+
+    Each request sends the query to the data_parser that calculates the result based on data from the data_ingestor
+and saves it on the disc. Then a route for get_response is called to get the response as json data.
+
+    The job_maintainer is used to keep track of the jobs that are running and the ones that are done. It is also used
+to keep track of the ids of the jobs. It uses two sets to keep track of the jobs that are running and the ones that are done.
+It is thread safe since sets are thread safe in python.
+
+    The logger is used to log the requests and the responses in a file. It is implemented using RotatingFileHandler to 
+rotate the logs when the file reaches a certain size. It is time and place safe since it uses UTC time.
+
+    The task_runner is used to run the tasks in a threadpool. It uses the concurrent.futures module to run the tasks
+by basically creating a wrapper of ThreadPoolExecutor from python. It is thread safe since the ThreadPoolExecutor is thread safe.
+
+    The unit_tests.py file contains the unit tests for the calculation functions. It uses the unittest module from python. Its
+important method is __submit__ that submits the requests to the server and uses a callback after to mark the job as done.
+
+    The parsing and calculations are done using pandas and csv for reading.
+
+    Unittests are created for all the computational functions and they work with dependency injection in the actual body of
+the functions. To run unittests see the instructions under section __How to run__.
+
+## Implementation
+
+    The entire assignment was implemented. The implementation is efficient since it uses a threadpool to run the tasks and a 
+set to keep track of the jobs. The implementation is well structured by having different entities responsible for different
+parts of the application.
+
+    The ThreadPool is created with:
+
+    """Initialize the ThreadPool class."""
+    if 'TP_NUM_OF_THREADS' in os.environ:
+        self.num_threads = int(os.environ['TP_NUM_OF_THREADS'])
+    else:
+        self.num_threads = os.cpu_count() or 1  # Ensure at least 1 thread
+
+    self.executor = ThreadPoolExecutor(max_workers=self.num_threads)
+
+    It uses the os.cpu_count() to get the number of threads to use. If the TP_NUM_OF_THREADS is set in the environment
+it will use that number of threads.
+
+
+    The jobMaintainer is created with:
+
+    class JobMaintainer:
+    """Class to maintain the status of jobs"""
+    def __init__(self):
+        """Initialize the JobMaintainer class"""
+        self.running_jobs = set()
+        self.done_jobs = set()
+
+    def is_job_running(self, job_id):
+        """Check if a job with the given job_id is running"""
+        return job_id in self.running_jobs
+
+    def is_job_done(self, job_id):
+        """Check if a job with the given job_id is done"""
+        return job_id in self.done_jobs
+
+    def finish_job(self, job_id):
+        """Finish a job with the given job_id"""
+        self.running_jobs.remove(job_id)
+        self.done_jobs.add(job_id)
+
+    def start_job(self, job_id):
+        """Start a job with the given job_id"""
+        self.running_jobs.add(job_id)
+
+    It basically uses two sets to keep track of the jobs that are running and the ones that are done and still being thread safe.
+
+    
+    Unittest use checks for values structured like this:
+
+    # Now you can compare the scalar values
+    self.assertAlmostEqual(result_scalar, result_ref, delta=0.0001,
+                           msg="Data_Value does not match within the expected range")
+
+    The delta is used to check if the values are close enough to be considered equal.
+
+
+## Additional
+
+    There are routes that are not covered in the automated tests, nor in the unittests. 
+These work (manually tested) and can be used for managing the application:
+
+    @webserver.route('/api/graceful_shutdown', methods=['GET'])
+    def graceful_shutdown():
+
+    @webserver.route('/api/jobs', methods=['GET'])
+    def jobs():
+
+    @webserver.route('/api/num_jobs', methods=['GET'])
+    def num_jobs():
+
+## Comments
+
+    The project is a good way to learn python and flask. It was not very related to threading, but it was a good way to learn
+how to use threadpools and how to structure a project in python. The details were well explained and the testing is pretty
+straightforward. The project is also a good way to learn how to use pandas and csv in python.
+
+    The problems are that some of the stuff cand become repetitive and the unittests are not neccesarily needed for the
+computation since automated tests are used. The project is also not very related to threading as well as you can make
+it thread safe with some thread safe data structures.
+
+    Overall, working on the project was a good experience and I learned a lot about python and flask.
+
+## Resources
+
+https://gitlab.cs.pub.ro/asc/asc-public/-/blob/master/assignments/README.example.md
+https://gitlab.cs.pub.ro/asc/asc-public/-/tree/master/assignments
+https://ocw.cs.pub.ro/courses/asc/teme/tema1
+
+## Git
+
+https://github.com/Dragomir1401/FLASK-HEALTH-SERVER
