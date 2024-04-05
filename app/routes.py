@@ -1,3 +1,4 @@
+"""This module contains the definition of the endpoints for the web server."""
 import json
 from flask import request, jsonify
 from app import WEB_SERVER as webserver
@@ -5,8 +6,10 @@ from app import WEB_SERVER as webserver
 # Example endpoint definition
 @webserver.route('/api/post_endpoint', methods=['POST'])
 def post_endpoint():
+    """Example POST endpoint"""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
+
     if request.method == 'POST':
         # Assuming the request contains JSON data
         data = request.json
@@ -18,12 +21,12 @@ def post_endpoint():
 
         # Sending back a JSON response
         return jsonify(response)
-    else:
-        # Method Not Allowed
-        return jsonify({"error": "Method not allowed"}), 405
+
+    return jsonify({"error": "Method not allowed"}), 405
 
 @webserver.route('/api/get_results/<job_id>', methods=['GET'])
 def get_response(job_id):
+    """Get the response for a job_id. If the job is running, return 'running'."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     webserver.data_parser.logger.info(f"Entering get_response with job_id: {job_id}")
@@ -33,29 +36,33 @@ def get_response(job_id):
     # {
     # "status": "error",
     # "reason": "Invalid job_id"
-    # }   
-    if job_id is None or not job_id.isdigit() or int(job_id) < 0 or int(job_id) >= webserver.job_counter:
-        return jsonify ({
+    # }
+    if (job_id is None or
+            not job_id.isdigit() or
+            int(job_id) < 0 or
+            int(job_id) >= webserver.job_counter):
+        return jsonify({
             "status": "error",
             "reason": "Invalid job_id"
         })
+
 
     # Check if job_id is running
     if webserver.data_parser.job_maintainer.is_job_running(int(job_id)):
         webserver.data_parser.logger.info(f"Exiting get_response with job_id: {job_id}")
         return jsonify({'status': 'running'})
-    
+
     # Check if job_id is done and return the result
     #    res = res_for(job_id)
     #    return jsonify({
     #        'status': 'done',
     #        'data': <JSON_PROCESSING_RESULT>
     #    })
-    
+
     # Read result from results/job_id.json
     with open(f"results/{job_id}.json", "r") as fin:
         res = json.load(fin)
-    
+
     webserver.data_parser.logger.info(f"Exiting get_response with job_id: {job_id}")
     return jsonify({
         'status': 'done',
@@ -64,9 +71,10 @@ def get_response(job_id):
 
 @webserver.route('/api/states_mean', methods=['POST'])
 def states_mean_request():
+    """Endpoint to calculate the mean of the states."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
-    
+
     # Get request data
     data = request.json
     webserver.data_parser.logger.info("Entering states_mean_request with data: {data}")
@@ -76,7 +84,7 @@ def states_mean_request():
 
     # Register job. Don't wait for task to finish
     webserver.tasks_runner.__submit__(webserver.data_parser.states_mean, data, job_id)
-    
+
     # Increment job_id counter
     webserver.job_counter += 1
 
@@ -86,6 +94,7 @@ def states_mean_request():
 
 @webserver.route('/api/state_mean', methods=['POST'])
 def state_mean_request():
+    """"Endpoint to calculate the mean of a state."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -107,6 +116,7 @@ def state_mean_request():
 
 @webserver.route('/api/best5', methods=['POST'])
 def best5_request():
+    """Endpoint to calculate the best 5 states."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -128,6 +138,7 @@ def best5_request():
 
 @webserver.route('/api/worst5', methods=['POST'])
 def worst5_request():
+    """Endpoint to calculate the worst 5 states."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -149,6 +160,7 @@ def worst5_request():
 
 @webserver.route('/api/global_mean', methods=['POST'])
 def global_mean_request():
+    """Endpoint to calculate the global mean."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -170,6 +182,7 @@ def global_mean_request():
 
 @webserver.route('/api/diff_from_mean', methods=['POST'])
 def diff_from_mean_request():
+    """Endpoint to calculate the difference from the mean."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -191,6 +204,7 @@ def diff_from_mean_request():
 
 @webserver.route('/api/state_diff_from_mean', methods=['POST'])
 def state_diff_from_mean_request():
+    """Endpoint to calculate the difference from the mean for a state."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -199,7 +213,7 @@ def state_diff_from_mean_request():
 
     # Get current job_id
     job_id = webserver.job_counter
-    
+
     # Register job. Don't wait for task to finish
     webserver.tasks_runner.__submit__(webserver.data_parser.state_diff_from_mean, data, job_id)
 
@@ -212,6 +226,7 @@ def state_diff_from_mean_request():
 
 @webserver.route('/api/mean_by_category', methods=['POST'])
 def mean_by_category_request():
+    """Endpoint to calculate the mean by category."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -231,9 +246,10 @@ def mean_by_category_request():
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
-    
+
 @webserver.route('/api/state_mean_by_category', methods=['POST'])
 def state_mean_by_category_request():
+    """Endpoint to calculate the mean by category for a state."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     # Get request data
@@ -249,13 +265,14 @@ def state_mean_by_category_request():
     # Increment job_id counter
     webserver.job_counter += 1
 
-    webserver.data_parser.logger.info(f"Exiting state_mean_by_category_request with job_id: {job_id}")
+    webserver.data_parser.logger.info(f"Exiting state_mean_by_category_request with id: {job_id}")
     # Return associated job_id
     return jsonify({"job_id": job_id})
 
 
 @webserver.route('/api/graceful_shutdown', methods=['GET'])
 def graceful_shutdown():
+    """Gracefully shutdown the server."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     webserver.data_parser.logger.info("Shutting down gracefully")
@@ -273,6 +290,7 @@ def graceful_shutdown():
 
 @webserver.route('/api/jobs', methods=['GET'])
 def jobs():
+    """Get the status of all jobs."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     webserver.data_parser.logger.info("Entering get jobs status")
@@ -285,18 +303,19 @@ def jobs():
     #       { "job_id_3": "running"}
     #   ]
     #  }
-    jobs = []
+    jobs_list = []
     for job_id in range(1, webserver.job_counter):
         if webserver.data_parser.job_maintainer.is_job_running(job_id):
-            jobs.append({job_id: "running"})
+            jobs_list.append({job_id: "running"})
         elif webserver.data_parser.job_maintainer.is_job_done(job_id):
-            jobs.append({job_id: "done"})
+            jobs_list.append({job_id: "done"})
 
     webserver.data_parser.logger.info("Exiting get jobs status")
-    return jsonify({"status": "done", "data": jobs})
+    return jsonify({"status": "done", "data": jobs_list})
 
 @webserver.route('/api/num_jobs', methods=['GET'])
 def num_jobs():
+    """Get the number of jobs that have been submitted."""
     if is_shutdown():
         return jsonify({"message": "Server is unable to accept new requests. It is closed."}), 503
     webserver.data_parser.logger.info("Entering get number of jobs")
@@ -308,6 +327,7 @@ def num_jobs():
 @webserver.route('/')
 @webserver.route('/index')
 def index():
+    """Display the available routes on the web server."""
     routes = get_defined_routes()
     msg = f"Hello, World!\n Interact with the webserver using one of the defined routes:\n"
 
@@ -320,6 +340,7 @@ def index():
     return msg
 
 def get_defined_routes():
+    """Get the defined routes on the web server."""
     routes = []
     for rule in webserver.url_map.iter_rules():
         methods = ', '.join(rule.methods)
@@ -327,6 +348,7 @@ def get_defined_routes():
     return routes
 
 def is_shutdown():
+    """Check if the server is shutdown. If so, respond with a 503 Service Unavailable."""
     if webserver.is_shutdown:
         # Log the shutdown message
         webserver.data_parser.logger.info("Server is unable to accept new requests. It is closed.")
