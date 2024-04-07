@@ -17,11 +17,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/global_mean/input/in-1.json", "r") as fin:
+        with open("./unittests/global_mean/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/global_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/global_mean/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the global_mean function with the query
@@ -42,11 +42,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/diff_from_mean/input/in-1.json", "r") as fin:
+        with open("./unittests/diff_from_mean/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/diff_from_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/diff_from_mean/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the diff_from_mean function with the query
@@ -60,8 +60,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Assert that the values (Data_Value) are almost equal, with a small
         # delta for floating point comparison
-        for key in data_dict.keys():
-            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001,
+        for key, val in data_dict.items():
+            self.assertAlmostEqual(val, ref_result[key], delta=0.0001,
                                    msg="Data_Value does not match within the expected range")
 
         print("Test diff_from_mean passed successfully.")
@@ -72,11 +72,13 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/state_diff_from_mean/input/in-1.json", "r") as fin:
+        with open("./unittests/state_diff_from_mean/input/in-1.json", "r",
+                  encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/state_diff_from_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/state_diff_from_mean/output/out-1.json", "r",
+                  encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the state_diff_from_mean function with the query
@@ -110,11 +112,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/mean_by_category/input/in-1.json", "r") as fin:
+        with open("./unittests/mean_by_category/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/mean_by_category/output/out-1.json", "r") as fout:
+        with open("./unittests/mean_by_category/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the mean_by_category function with the query
@@ -137,11 +139,13 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingest)
 
         # Read input query from in-idx.json
-        with open("./unittests/state_mean_by_category/input/in-1.json", "r") as fin:
+        with open("./unittests/state_mean_by_category/input/in-1.json", "r",
+                   encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/state_mean_by_category/output/out-1.json", "r") as fout:
+        with open("./unittests/state_mean_by_category/output/out-1.json", "r",
+                   encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the state_mean_by_category function with the query
@@ -164,11 +168,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/state_mean/input/in-1.json", "r") as fin:
+        with open("./unittests/state_mean/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/state_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/state_mean/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Since JSON keys are always strings, ensure the ref keys/values are extracted correctly
@@ -198,11 +202,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/states_mean/input/in-1.json", "r") as fin:
+        with open("./unittests/states_mean/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/states_mean/output/out-1.json", "r") as fout:
+        with open("./unittests/states_mean/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the states_mean function with the query
@@ -216,8 +220,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Assert that the values (Data_Value) are almost equal, with a small delta for
         # floating point comparison
-        for key in data_dict.keys():
-            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001,
+        for key, val in data_dict.items():
+            self.assertAlmostEqual(val, ref_result[key], delta=0.0001,
                                    msg="Data_Value does not match within the expected range")
 
         print("Test states_mean passed successfully.")
@@ -228,11 +232,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/best5/input/in-1.json", "r") as fin:
+        with open("./unittests/best5/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/best5/output/out-1.json", "r") as fout:
+        with open("./unittests/best5/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the best5 function with the query
@@ -246,8 +250,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Assert that the values (Data_Value) are almost equal, with a small delta for
         # floating point comparison
-        for key in data_dict.keys():
-            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001,
+        for key, val in data_dict.items():
+            self.assertAlmostEqual(val, ref_result[key], delta=0.0001,
                                    msg="Data_Value does not match within the expected range")
 
         print("Test best5 passed successfully.")
@@ -258,11 +262,11 @@ class TestServerEndpoints(unittest.TestCase):
         data_parser = DataParser(data_ingestor)
 
         # Read input query from in-idx.json
-        with open("./unittests/worst5/input/in-1.json", "r") as fin:
+        with open("./unittests/worst5/input/in-1.json", "r", encoding="utf-8") as fin:
             query = json.load(fin)
 
         # Read ref results from out-idx.json
-        with open("./unittests/worst5/output/out-1.json", "r") as fout:
+        with open("./unittests/worst5/output/out-1.json", "r", encoding="utf-8") as fout:
             ref_result = json.load(fout)
 
         # Execute the worst5 function with the query
@@ -276,8 +280,8 @@ class TestServerEndpoints(unittest.TestCase):
 
         # Assert that the values (Data_Value) are almost equal, with a small delta for
         # floating point comparison
-        for key in data_dict.keys():
-            self.assertAlmostEqual(data_dict[key], ref_result[key], delta=0.0001,
+        for key, val in data_dict.items():
+            self.assertAlmostEqual(val, ref_result[key], delta=0.0001,
                                    msg="Data_Value does not match within the expected range")
 
         print("Test worst5 passed successfully.")

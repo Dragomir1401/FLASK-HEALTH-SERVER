@@ -60,7 +60,7 @@ def get_response(job_id):
     #    })
 
     # Read result from results/job_id.json
-    with open(f"results/{job_id}.json", "r") as fin:
+    with open(f"results/{job_id}.json", "r", encoding="utf-8") as fin:
         res = json.load(fin)
 
     webserver.data_parser.logger.info(f"Exiting get_response with job_id: {job_id}")
@@ -329,12 +329,10 @@ def num_jobs():
 def index():
     """Display the available routes on the web server."""
     routes = get_defined_routes()
-    msg = f"Hello, World!\n Interact with the webserver using one of the defined routes:\n"
+    msg = "Hello, World!\n Interact with the webserver using one of the defined routes:\n"
 
     # Display each route as a separate HTML <p> tag
-    paragraphs = ""
-    for route in routes:
-        paragraphs += f"<p>{route}</p>"
+    paragraphs = "".join(f"<p>{route}</p>" for route in routes)
 
     msg += paragraphs
     return msg

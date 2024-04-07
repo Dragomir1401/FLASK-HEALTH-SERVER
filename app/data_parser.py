@@ -11,7 +11,7 @@ def json_writer(data, job_id):
     data_dict = dict(zip(data['LocationDesc'], data['Data_Value']))
 
     # Save the results in results/ directory with the name of the job_id as json file
-    with open(f'results/{job_id}.json', 'w') as file:
+    with open(f'results/{job_id}.json', 'w', encoding="utf-8") as file:
         # Write field:value pairs in json format
         json.dump(data_dict, file)
 
@@ -221,7 +221,7 @@ class DataParser:
 
             # Create output as {"global_mean" : value}
             data_dict = {"global_mean": data_mean['Data_Value'].values[0]}
-            with open(f'results/{job_id}.json', 'w') as file:
+            with open(f'results/{job_id}.json', 'w', encoding="utf-8") as file:
                 # Write field:value pairs in json format
                 json.dump(data_dict, file)
             self.job_maintainer.finish_job(job_id)
@@ -297,7 +297,7 @@ class DataParser:
 
             # Create a dict with a value state and the difference
             data_dict = {state: data_diff}
-            with open(f'results/{job_id}.json', 'w') as file:
+            with open(f'results/{job_id}.json', 'w', encoding="utf-8") as file:
                 # Write field:value pairs in json format
                 json.dump(data_dict, file)
 
@@ -342,7 +342,7 @@ class DataParser:
 
         if job_id is not None:
             # Save the dictionary as a JSON file in the specified path
-            with open(f'results/{job_id}.json', 'w') as file:
+            with open(f'results/{job_id}.json', 'w', encoding="utf-8") as file:
                 json.dump(result, file)
 
             self.job_maintainer.finish_job(job_id)
@@ -392,7 +392,7 @@ class DataParser:
 
         if job_id is not None:
             # Save the dictionary as a JSON file in the specified path
-            with open(f'results/{job_id}.json', 'w') as file:
+            with open(f'results/{job_id}.json', 'w', encoding="utf-8") as file:
                 json.dump(result, file)
 
             self.job_maintainer.finish_job(job_id)
