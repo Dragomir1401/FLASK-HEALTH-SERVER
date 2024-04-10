@@ -1,161 +1,167 @@
+commit 7bd316f6fcbb1ce41f662cb406b409cc3358852f
+Author: Dragomir Andrei <andreidrago14@yahoo.com>
+Date: Sun Apr 7 14:31:37 2024 +0300
+
+    fixed pylint
+
 commit 8191b10ed6f4dec51fc7594ed6a5e86d2252cfef
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sun Apr 7 13:59:12 2024 +0300
+Date: Sun Apr 7 13:59:12 2024 +0300
 
     added pylintrc
 
 commit d386aeab8dc239dd23124e450b02eb6ed7629974
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Fri Apr 5 16:39:22 2024 +0300
+Date: Fri Apr 5 16:39:22 2024 +0300
 
     added readme
 
 commit 638e6ea2b2f687f71cd4a2c0c83479bca4458ae0
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Fri Apr 5 10:34:24 2024 +0300
+Date: Fri Apr 5 10:34:24 2024 +0300
 
     4 pylint errs remaining
 
 commit 6296a539ffc06a4abb9d656e63c47fa713b59c0d
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Fri Apr 5 09:46:27 2024 +0300
+Date: Fri Apr 5 09:46:27 2024 +0300
 
     solved circular imports for logger
 
 commit fdf572500c9ba5823e0470e55feb61840fd78baa
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Thu Apr 4 21:05:03 2024 +0300
+Date: Thu Apr 4 21:05:03 2024 +0300
 
     solved some pylint errs problems at circular imports
 
 commit 54bc6df61604405e7abd6aa2c69121dee7a117c5
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Thu Apr 4 19:31:31 2024 +0300
+Date: Thu Apr 4 19:31:31 2024 +0300
 
     added functionality for unittest
 
 commit 67afcd56f63ed05112b87c3e7a4a184973fb49b9
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Wed Apr 3 19:29:03 2024 +0300
+Date: Wed Apr 3 19:29:03 2024 +0300
 
     need to add dependency injection
 
 commit 538cfda4e554b275f10d09e98e3bd08c38212ef6
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Tue Apr 2 11:44:54 2024 +0300
+Date: Tue Apr 2 11:44:54 2024 +0300
 
     added worst5 unittest
 
 commit 94b93fcbc82e66765f9ee2ca2ac320b79b20a55b
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Tue Apr 2 11:29:17 2024 +0300
+Date: Tue Apr 2 11:29:17 2024 +0300
 
     added sleep between tests and added best5 test
 
 commit ae1fc41e6222fdb11c6f26f2812790facbd403fe
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 18:12:26 2024 +0300
+Date: Mon Apr 1 18:12:26 2024 +0300
 
     added state_mean
 
 commit aefff422c9ef2ca4a2ac61a31d74b5ea6d91cbb6
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 17:58:07 2024 +0300
+Date: Mon Apr 1 17:58:07 2024 +0300
 
     problems at unittest state_min
 
 commit 96641dea1c47ccff0d3ee7b8bece523b0e496c1a
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 17:16:10 2024 +0300
+Date: Mon Apr 1 17:16:10 2024 +0300
 
     added graceful shutdown unittest
 
 commit 5cb17dc0f43adef33e098a9a996c328a416f8827
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 16:50:20 2024 +0300
+Date: Mon Apr 1 16:50:20 2024 +0300
 
     problems at unittests
 
 commit 1e53a1ed546f9b3377fad513cd8f71585abd4b53
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 12:38:46 2024 +0300
+Date: Mon Apr 1 12:38:46 2024 +0300
 
     added 2 new unittests
 
 commit ca3cc29aea4b9d91e1606aad447373391a70878e
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Mon Apr 1 11:28:43 2024 +0300
+Date: Mon Apr 1 11:28:43 2024 +0300
 
     more dev in unittests
 
 commit 9c6623d7bb18298ce617151f728e73f6af9d0e33
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sun Mar 31 13:32:13 2024 +0300
+Date: Sun Mar 31 13:32:13 2024 +0300
 
     added unittests placeholder structures for future development
 
 commit b6c83e3b7fcd9c8767aea31b71d572d0f4288b24
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sun Mar 31 13:10:55 2024 +0300
+Date: Sun Mar 31 13:10:55 2024 +0300
 
     added if_shutdown method
 
 commit 8073961bc676bc77244875c992dcf6e7a904f7d3
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sun Mar 31 12:57:39 2024 +0300
+Date: Sun Mar 31 12:57:39 2024 +0300
 
     added rotating file handler
 
 commit b650f4b245d8ab90d1e06e96e1fad387d7f38b09
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sun Mar 31 11:04:14 2024 +0300
+Date: Sun Mar 31 11:04:14 2024 +0300
 
     restructured code
 
 commit cac8b381553e02416bbd6c01bb88cfa56481a44f
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 20:53:23 2024 +0200
+Date: Sat Mar 30 20:53:23 2024 +0200
 
     made automated tests work
 
 commit 54434f1952fe93d81e5e0f5c8714c3da11424289
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 20:47:46 2024 +0200
+Date: Sat Mar 30 20:47:46 2024 +0200
 
     resolved some automated tests errors at commands
 
 commit 26bd119214cf14f5cd9db8ca5903a133552153ea
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 17:41:56 2024 +0200
+Date: Sat Mar 30 17:41:56 2024 +0200
 
     problems at api/get_results/
 
 commit 67e63b2050fe8b4b62417cdc4c6bbb618b63f49c
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 17:14:15 2024 +0200
+Date: Sat Mar 30 17:14:15 2024 +0200
 
     added get methods
 
 commit 8a6901cf8bd0e3b7a9c51e75da8b309d4e19bd91
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 16:36:23 2024 +0200
+Date: Sat Mar 30 16:36:23 2024 +0200
 
     added almost all routes
 
 commit dd8055ece3cb0cf596194bf1fae0675e5545329c
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 13:12:51 2024 +0200
+Date: Sat Mar 30 13:12:51 2024 +0200
 
     added first route states_mean
 
 commit 8474fe94f712434b339ad2a545c59cbe16e4649a
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Sat Mar 30 10:27:17 2024 +0200
+Date: Sat Mar 30 10:27:17 2024 +0200
 
     structure modifications for correct data handling
 
 commit 8b61a08bbd4d8ebadd705953c1179341d1d8c7a1
 Author: Dragomir Andrei <andreidrago14@yahoo.com>
-Date:   Fri Mar 29 11:23:37 2024 +0200
+Date: Fri Mar 29 11:23:37 2024 +0200
 
     initial structure

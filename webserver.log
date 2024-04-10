@@ -1,40 +1,26 @@
-[2024-04-07 11:28:58] INFO in logger: Got question: Percent of adults who achieve at least 150 minutes a week of moderate-intensity aerobic physical activity or 75 minutes a week of vigorous-intensity aerobic physical activity and engage in muscle-strengthening activities on 2 or more days a week and outputted 5 results.
-[2024-04-07 11:28:59] INFO in logger: Entering get_response with job_id: 112
-[2024-04-07 11:28:59] INFO in logger: Exiting get_response with job_id: 112
-[2024-04-07 11:28:59] INFO in logger: Got request {'question': 'Percent of adults who engage in no leisure-time physical activity'} for worst5
-[2024-04-07 11:28:59] INFO in logger: Exiting worst5_request with job_id: 113
-[2024-04-07 11:28:59] INFO in logger: Entering get_response with job_id: 113
-[2024-04-07 11:28:59] INFO in logger: Exiting get_response with job_id: 113
-[2024-04-07 11:28:59] INFO in logger: Got question: Percent of adults who engage in no leisure-time physical activity and outputted 5 results.
-[2024-04-07 11:28:59] INFO in logger: Entering get_response with job_id: 113
-[2024-04-07 11:28:59] INFO in logger: Exiting get_response with job_id: 113
-[2024-04-07 11:28:59] INFO in logger: Got request {'question': 'Percent of adults aged 18 years and older who have obesity'} for worst5
-[2024-04-07 11:28:59] INFO in logger: Exiting worst5_request with job_id: 114
-[2024-04-07 11:28:59] INFO in logger: Entering get_response with job_id: 114
-[2024-04-07 11:28:59] INFO in logger: Exiting get_response with job_id: 114
-[2024-04-07 11:28:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have obesity and outputted 5 results.
-[2024-04-07 11:28:59] INFO in logger: Entering get_response with job_id: 114
-[2024-04-07 11:28:59] INFO in logger: Exiting get_response with job_id: 114
-[2024-04-07 11:30:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 12 results.
-[2024-04-07 11:30:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 12 results.
-[2024-04-07 11:30:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 12 results.
-[2024-04-07 11:30:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 12 results.
-[2024-04-07 11:30:59] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 12 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:02] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 2 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
-[2024-04-07 11:31:04] INFO in logger: Got question: Percent of adults aged 18 years and older who have an overweight classification and outputted 5 results.
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 111
+[2024-04-10 14:36:16] INFO in logger: Got question: Percent of adults who engage in muscle-strengthening activities on 2 or more days a week and outputted 5 results.
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 111
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 111
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 111
+[2024-04-10 14:36:16] INFO in logger: Got request {'question': 'Percent of adults who achieve at least 150 minutes a week of moderate-intensity aerobic physical activity or 75 minutes a week of vigorous-intensity aerobic physical activity and engage in muscle-strengthening activities on 2 or more days a week'} for worst5
+[2024-04-10 14:36:16] INFO in logger: Exiting worst5_request with job_id: 112
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 112
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 112
+[2024-04-10 14:36:16] INFO in logger: Got question: Percent of adults who achieve at least 150 minutes a week of moderate-intensity aerobic physical activity or 75 minutes a week of vigorous-intensity aerobic physical activity and engage in muscle-strengthening activities on 2 or more days a week and outputted 5 results.
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 112
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 112
+[2024-04-10 14:36:16] INFO in logger: Got request {'question': 'Percent of adults who engage in no leisure-time physical activity'} for worst5
+[2024-04-10 14:36:16] INFO in logger: Exiting worst5_request with job_id: 113
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 113
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 113
+[2024-04-10 14:36:16] INFO in logger: Got question: Percent of adults who engage in no leisure-time physical activity and outputted 5 results.
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 113
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 113
+[2024-04-10 14:36:16] INFO in logger: Got request {'question': 'Percent of adults aged 18 years and older who have obesity'} for worst5
+[2024-04-10 14:36:16] INFO in logger: Exiting worst5_request with job_id: 114
+[2024-04-10 14:36:16] INFO in logger: Got question: Percent of adults aged 18 years and older who have obesity and outputted 5 results.
+[2024-04-10 14:36:16] INFO in logger: Entering get_response with job_id: 114
+[2024-04-10 14:36:16] INFO in logger: Exiting get_response with job_id: 114
+[2024-04-10 14:36:17] INFO in logger: Entering get_response with job_id: 114
+[2024-04-10 14:36:17] INFO in logger: Exiting get_response with job_id: 114

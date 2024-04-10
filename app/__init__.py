@@ -1,6 +1,7 @@
 """Docstring: __init__ point of the application.
 This is where the application is initialized and the Flask app is created."""
 
+import shutil
 from flask import Flask
 from app.data_ingestor import DataIngestor
 from app.data_parser import DataParser
@@ -8,6 +9,9 @@ from app.task_runner import ThreadPool
 
 WEB_SERVER = Flask(__name__)
 WEB_SERVER.tasks_runner = ThreadPool()
+
+# Delete /results directory if it exists and create a new one
+shutil.rmtree('results', ignore_errors=True)
 
 # Read the csv path from nutrition_activity_obesity_usa_subset.csv
 WEB_SERVER.data_ingestor = DataIngestor("nutrition_activity_obesity_usa_subset.csv")
